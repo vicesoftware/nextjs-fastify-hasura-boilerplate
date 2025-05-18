@@ -13,6 +13,7 @@ services:
         - "turbo.json"
         - "pnpm*"
     buildCommand: |
+        export NODE_ENV=production
         corepack enable
         pnpm install --frozen-lockfile
         npx turbo build --filter=web
@@ -45,6 +46,7 @@ services:
         - "turbo.json"
         - "pnpm*"
     buildCommand: |
+        export NODE_ENV=production
         corepack enable
         pnpm install --frozen-lockfile
         npx turbo build --filter=api
