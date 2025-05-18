@@ -7,6 +7,12 @@ import {
 } from '@nestjs/terminus';
 import { HealthCheckResponse } from '@repo/api-types';
 
+// Import package.json for version info
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const packageJson = require('../../package.json');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const rootPackageJson = require('../../../../package.json');
+
 @Controller('api/health')
 export class HealthController {
   // Track the start time of the server
@@ -38,6 +44,18 @@ export class HealthController {
             status: 'up',
             uptimeInSeconds,
             startedAt: this.startTime.toISOString(),
+          },
+        };
+      },
+      // Version information check
+      () => {
+        return {
+          version: {
+            status: 'up',
+            app: packageJson.version,
+            monorepo: rootPackageJson.name,
+            packageManager: rootPackageJson.packageManager,
+            node: process.version,
           },
         };
       },
