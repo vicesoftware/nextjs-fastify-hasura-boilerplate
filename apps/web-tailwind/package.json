@@ -1,0 +1,38 @@
+{
+  "name": "web-tailwind",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"next dev --turbopack --port 3001\" \"pnpm format:watch\"",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint --max-warnings 0",
+    "check-types": "tsc --noEmit",
+    "format:watch": "onchange \"**/*.{ts,tsx,js,jsx,json,md}\" -- prettier --write {{changed}}"
+  },
+  "dependencies": {
+    "@repo/api-types": "workspace:*",
+    "@repo/ui": "workspace:*",
+    "next": "15.3.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@tailwindcss/postcss": "^4.0.0",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.15",
+    "concurrently": "^8.2.0",
+    "eslint": "^9",
+    "eslint-config-next": "15.3.2",
+    "onchange": "^7.1.0",
+    "postcss": "^8.4.29",
+    "prettier": "^3.0.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
