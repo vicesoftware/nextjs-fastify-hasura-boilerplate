@@ -1,11 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
-import { App } from 'supertest/types';
+import { Server } from 'http';
+
+import request from 'supertest';
 import { AppModule } from './../src/app.module';
 
 describe('AppController (e2e)', () => {
-  let app: INestApplication<App>;
+  let app: INestApplication;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -16,10 +17,14 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
+  // Disable ESLint for the test case because supertest has inherent type issues
+
   it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const server: Server = app.getHttpServer();
+
+    const req = request(server);
+
+    return req.get('/').expect(200).expect('Hello World!');
   });
 });

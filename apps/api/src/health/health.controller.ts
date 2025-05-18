@@ -8,10 +8,22 @@ import {
 import { HealthCheckResponse } from '@repo/api-types';
 
 // Import package.json for version info
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const packageJson = require('../../package.json');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const rootPackageJson = require('../../../../package.json');
+import packageInfo from '../../package.json';
+import rootPackageInfo from '../../../../package.json';
+
+// Define typed structures for the JSON files
+interface AppPackageJson {
+  version: string;
+}
+
+interface RootPackageJson {
+  name: string;
+  packageManager: string;
+}
+
+// Type assertion with specific interfaces
+const packageJson: AppPackageJson = packageInfo as AppPackageJson;
+const rootPackageJson: RootPackageJson = rootPackageInfo as RootPackageJson;
 
 @Controller('api/health')
 export class HealthController {

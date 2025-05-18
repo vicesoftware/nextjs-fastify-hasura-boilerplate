@@ -35,7 +35,7 @@ services:
       - key: TURBO_TOKEN
         sync: false
       - key: PNPM_VERSION
-        value: "8.6.0"
+        value: "9.0.0"
 
   - type: web
     name: api
@@ -63,6 +63,11 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: WEB_URL
+        fromService:
+          type: web
+          name: web
+          property: url
       - key: TURBO_REMOTE_ONLY
         value: "true"
       - key: TURBO_TEAM
@@ -70,7 +75,7 @@ services:
       - key: TURBO_TOKEN
         sync: false
       - key: PNPM_VERSION
-        value: "8.6.0"
+        value: "9.0.0"
 
 # Uncomment below to add Redis
 # - type: redis

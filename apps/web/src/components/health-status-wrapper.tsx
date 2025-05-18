@@ -9,5 +9,6 @@ const HealthStatus = dynamic(() => import("./health-status"), {
 });
 
 export default function HealthStatusWrapper() {
-  return <HealthStatus />;
+  const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/health`;
+  return <HealthStatus apiUrl={apiUrl} />;
 }

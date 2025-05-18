@@ -11,12 +11,18 @@
   - [Apps and Packages](#apps-and-packages)
   - [Architectural Features](#architectural-features)
 - [🧰 Developer Experience Features](#-developer-experience-features)
-  - [Automatic Code Formatting](#automatic-code-formatting)
-  - [Build Pipeline Quality Checks](#build-pipeline-quality-checks)
+  - [Code Quality Workflow](#code-quality-workflow)
+    - [✨ Automatic Code Formatting](#-automatic-code-formatting)
+    - [🔍 ESLint for Code Quality](#-eslint-for-code-quality)
+    - [✅ Build Pipeline Checks](#-build-pipeline-checks)
 - [🔄 Type Sharing Example: Health Check](#-type-sharing-example-health-check)
 - [🔮 Future Integrations](#-future-integrations)
   - [Redis Integration Plan](#redis-integration-plan)
 - [🚀 Deployment](#-deployment)
+  - [Environment Variables](#environment-variables)
+    - [Web Application (Next.js)](#web-application-nextjs)
+    - [API Application (NestJS)](#api-application-nestjs)
+    - [Database Configuration (When Added)](#database-configuration-when-added)
   - [Utilities](#utilities)
   - [Build](#build-1)
   - [Develop](#develop)
@@ -232,6 +238,53 @@ Key deployment features:
 - Environment variable management
 - PostgreSQL integration
 - Redis add-on (when needed)
+
+### Environment Variables
+
+#### Web Application (Next.js)
+
+| Variable | Development | Production | Description |
+|----------|-------------|------------|-------------|
+| `NEXT_PUBLIC_API_URL` | `http://localhost:4000/api` | `${services.api.url}/api` | URL of the backend API service |
+| `NODE_ENV` | `development` | `production` | Environment mode |
+
+Create a `.env.local` file in the `apps/web` directory for local development:
+
+```
+# API Configuration for local development
+NEXT_PUBLIC_API_URL=http://localhost:4000/api
+```
+
+#### API Application (NestJS)
+
+| Variable | Development | Production | Description |
+|----------|-------------|------------|-------------|
+| `PORT` | `4000` | Set by hosting platform | Port on which the API server runs |
+| `NODE_ENV` | `development` | `production` | Environment mode |
+| `WEB_URL` | Not required | Set automatically | URL of the web frontend (for CORS) |
+
+The production deployment automatically configures these variables in the render.yaml file:
+
+```yaml
+# From render.yaml
+envVars:
+  - key: NODE_ENV
+    value: production
+  - key: WEB_URL
+    fromService:
+      type: web
+      name: web
+      property: url
+```
+
+#### Database Configuration (When Added)
+
+When adding a database, you'll need to configure these additional variables:
+
+| Variable | Description |
+|----------|-------------|
+| `DATABASE_URL` | Connection string for PostgreSQL |
+| `DATABASE_SSL` | Whether to use SSL for database connection (`true`/`false`) |
 
 ### Utilities
 
