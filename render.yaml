@@ -23,6 +23,14 @@ services:
         value: https://api.onrender.com/api
       - key: NODE_ENV
         value: production
+      - key: TURBO_REMOTE_ONLY
+        value: "true"
+      - key: TURBO_TEAM
+        value: "your-team-name"
+      - key: TURBO_TOKEN
+        sync: false
+      - key: PNPM_VERSION
+        value: "8.6.0"
     autoDeploy: true
     caching:
       paths:
@@ -56,6 +64,14 @@ services:
         value: 4000
       - key: NODE_ENV
         value: production
+      - key: TURBO_REMOTE_ONLY
+        value: "true"
+      - key: TURBO_TEAM
+        value: "your-team-name"
+      - key: TURBO_TOKEN
+        sync: false
+      - key: PNPM_VERSION
+        value: "8.6.0"
     healthCheckPath: /api/health
     autoDeploy: true
     addons:
@@ -69,14 +85,3 @@ services:
 #   name: app-redis
 #   ipAllowList: []  # Only allow internal connections
 #   plan: free
-
-# Global build settings for Turbo acceleration
-envVars:
-  - key: TURBO_REMOTE_ONLY
-    value: "true"
-  - key: TURBO_TEAM
-    value: "your-team-name"  # Replace with your actual team name
-  - key: TURBO_TOKEN
-    sync: false  # Set this token in Render dashboard
-  - key: PNPM_VERSION
-    value: "8.6.0"  # Specify the version of pnpm to use
