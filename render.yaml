@@ -1,8 +1,8 @@
-# render.yaml
 services:
   - type: web
     name: web
     env: node
+    root: apps/web
     buildFilter:
       paths:
         - apps/web/**
@@ -12,12 +12,10 @@ services:
         - pnpm-workspace.yaml
     build:
       command: |
-        npm install -g pnpm
-        pnpm install
-        pnpm build --filter=web
-    start: |
-      cd apps/web && 
-      pnpm start
+        corepack enable
+        pnpm install --frozen-lockfile
+        pnpm turbo run build --filter=web
+    start: pnpm start
     envVars:
       - key: NEXT_PUBLIC_API_URL
         value: https://api.onrender.com/api
@@ -34,12 +32,13 @@ services:
     autoDeploy: true
     caching:
       paths:
-        - apps/web/node_modules
-        - apps/web/.next/cache
+        - ../../node_modules
+        - .next/cache
 
   - type: web
     name: api
     env: node
+    root: apps/api
     buildFilter:
       paths:
         - apps/api/**
@@ -49,12 +48,10 @@ services:
         - pnpm-workspace.yaml
     build:
       command: |
-        npm install -g pnpm
-        pnpm install
-        pnpm build --filter=api
-    start: |
-      cd apps/api && 
-      pnpm start:prod
+        corepack enable
+        pnpm install --frozen-lockfile
+        pnpm turbo run build --filter=api
+    start: pnpm start:prod
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -79,6 +76,7 @@ services:
         name: postgres-db
         plan: free
         ipAllowList: []
+
 
 # Uncomment below to add Redis
 # - type: redis
