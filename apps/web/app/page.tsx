@@ -1,6 +1,7 @@
 import Image, { type ImageProps } from "next/image";
 import { Button } from "@repo/ui/button";
 import styles from "./page.module.css";
+import HealthStatusWrapper from "../components/health-status-wrapper";
 
 type Props = Omit<ImageProps, "src"> & {
   srcLight: string;
@@ -66,6 +67,11 @@ export default function Home() {
         <Button appName="web" className={styles.secondary}>
           Open alert
         </Button>
+
+        <div className={styles.healthStatusWrapper}>
+          <h2>API Health Status</h2>
+          <HealthStatusWrapper />
+        </div>
       </main>
       <footer className={styles.footer}>
         <a

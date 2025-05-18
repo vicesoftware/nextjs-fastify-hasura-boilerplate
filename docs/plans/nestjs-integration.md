@@ -117,20 +117,24 @@ This implementation:
 - Allows developers to work quickly in development without blocking on lint errors
 - Requires all lint and type issues to be fixed before code can be merged
 
-### 4. Shared Types
+### 4. Shared Types ✅
 - Create `@repo/api-types` package for shared types
-- Define health check response interface
-- Configure package for use in both frontend and backend
+- Define health check response interface based on @nestjs/terminus output
+- Configure package for export/import structure for type sharing
+- Configure package for use in the frontend
+- Successfully integrated with the health controller
 
-### 5. Frontend Integration
+### 5. Frontend Integration ✅
 - Create component to fetch and display health status
 - Add health status indicator to the web app
 - Implement error handling for API failures
+- Added automatic refresh of health status data every 30 seconds
 
-### 6. Turborepo Configuration
+### 6. Turborepo Configuration ✅
 - Update Turborepo configuration to include the NestJS app
 - Configure build, dev, and test commands for the API
 - Set up proper dependencies between packages
+- Fixed dev command to build the project before starting watch mode
 
 ### 7. Testing
 - Test health check endpoint directly
@@ -141,6 +145,9 @@ This implementation:
 - Add GitHub Actions workflow to run build on PRs
 - Ensure builds fail if linting or type checking fails
 - Set up automatic deployment for main branch
+
+### 9. Fix ESLint IDE integration for the packages
+ - We need to get better support for eslint in the IDE in all the packages like api-types package
 
 ## Development Workflow
 1. Start the NestJS server with `pnpm dev --filter=api`

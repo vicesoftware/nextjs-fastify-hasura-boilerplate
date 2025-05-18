@@ -2,10 +2,10 @@ import { Controller, Get } from '@nestjs/common';
 import {
   HealthCheck,
   HealthCheckService,
-  HealthCheckResult,
   MemoryHealthIndicator,
   DiskHealthIndicator,
 } from '@nestjs/terminus';
+import { HealthCheckResponse } from '@repo/api-types';
 
 @Controller('api/health')
 export class HealthController {
@@ -20,8 +20,8 @@ export class HealthController {
 
   @Get()
   @HealthCheck()
-  async check(): Promise<HealthCheckResult> {
-    return this.health.check([
+  async check(): Promise<HealthCheckResponse> {
+    const result = await this.health.check([
       // Check memory usage
       async () => this.memory.checkHeap('memory_heap', 150 * 1024 * 1024), // 150MB max heap
       // Check disk storage
@@ -32,6 +32,7 @@ export class HealthController {
         const uptime = Date.now() - this.startTime.getTime();
         const uptimeInSeconds = Math.floor(uptime / 1000);
 
+        // Follow NestJS health indicator structure
         return {
           uptime: {
             status: 'up',
@@ -41,5 +42,8 @@ export class HealthController {
         };
       },
     ]);
+
+    // Convert to our shared type
+    return result as unknown as HealthCheckResponse;
   }
 }

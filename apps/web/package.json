@@ -12,6 +12,7 @@
     "format:watch": "onchange \"**/*.{ts,tsx,js,jsx,json,md}\" -- prettier --write {{changed}}"
   },
   "dependencies": {
+    "@repo/api-types": "workspace:*",
     "@repo/ui": "workspace:*",
     "next": "^15.3.0",
     "react": "^19.1.0",

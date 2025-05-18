@@ -38,6 +38,9 @@ importers:
       '@nestjs/terminus':
         specifier: ^11.0.0
         version: 11.0.0(@nestjs/common@11.1.1(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.1(@nestjs/common@11.1.1(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@repo/api-types':
+        specifier: workspace:*
+        version: link:../../packages/api-types
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -160,6 +163,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@repo/api-types':
+        specifier: workspace:*
+        version: link:../../packages/api-types
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -188,6 +194,21 @@ importers:
       '@types/react-dom':
         specifier: 19.1.1
         version: 19.1.1(@types/react@19.1.0)
+      eslint:
+        specifier: ^9.26.0
+        version: 9.26.0
+      typescript:
+        specifier: 5.8.2
+        version: 5.8.2
+
+  packages/api-types:
+    devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
       eslint:
         specifier: ^9.26.0
         version: 9.26.0
@@ -4467,6 +4488,7 @@ packages:
   typescript@5.8.2:
     resolution: {integrity: sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ==}
     engines: {node: '>=14.17'}
+    hasBin: true
 
   typescript@5.8.3:
     resolution: {integrity: sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ==}
