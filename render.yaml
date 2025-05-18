@@ -16,7 +16,8 @@ services:
         export NODE_ENV=production
         corepack enable
         pnpm install --frozen-lockfile
-        npx turbo build --filter=web
+        cd ../../packages/api-types && pnpm build
+        cd ../../apps/web && pnpm build
     startCommand: pnpm start
     healthCheckPath: /api/health
     envVars:
@@ -49,7 +50,8 @@ services:
         export NODE_ENV=production
         corepack enable
         pnpm install --frozen-lockfile
-        npx turbo build --filter=api
+        cd ../../packages/api-types && pnpm build
+        cd ../../apps/api && pnpm build
     startCommand: pnpm start:prod
     healthCheckPath: /api/health
     envVars:
