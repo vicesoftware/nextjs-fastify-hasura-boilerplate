@@ -31,10 +31,6 @@ services:
         sync: false
       - key: PNPM_VERSION
         value: "8.6.0"
-    caching:
-      paths:
-        - ../../node_modules
-        - .next/cache
 
   - type: web
     name: api
