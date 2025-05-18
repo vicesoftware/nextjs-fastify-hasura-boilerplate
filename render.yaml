@@ -5,7 +5,7 @@ services:
     env: node
     region: ohio
     plan: free
-    rootDir: apps/web
+    rootDir: .
     buildFilter:
       paths:
         - "apps/web/**"
@@ -15,10 +15,13 @@ services:
     buildCommand: |
         export NODE_ENV=production
         corepack enable
-        pnpm install --frozen-lockfile
-        cd ../../packages/api-types && pnpm build
+        # Install all dependencies including dev dependencies
+        NODE_ENV=development pnpm install
+        # Build API types first
+        cd packages/api-types && pnpm build
+        # Build web app
         cd ../../apps/web && pnpm build
-    startCommand: pnpm start
+    startCommand: cd apps/web && pnpm start
     healthCheckPath: /api/health
     envVars:
       - key: NEXT_PUBLIC_API_URL
@@ -39,7 +42,7 @@ services:
     env: node
     region: ohio
     plan: free
-    rootDir: apps/api
+    rootDir: .
     buildFilter:
       paths:
         - "apps/api/**"
@@ -49,10 +52,13 @@ services:
     buildCommand: |
         export NODE_ENV=production
         corepack enable
-        pnpm install --frozen-lockfile
-        cd ../../packages/api-types && pnpm build
+        # Install all dependencies including dev dependencies
+        NODE_ENV=development pnpm install
+        # Build API types first
+        cd packages/api-types && pnpm build
+        # Build API app
         cd ../../apps/api && pnpm build
-    startCommand: pnpm start:prod
+    startCommand: cd apps/api && pnpm start:prod
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
