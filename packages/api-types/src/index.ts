@@ -1,2 +1,2 @@
 // Export all health check types
-export * from './health';
+export * from "./health";

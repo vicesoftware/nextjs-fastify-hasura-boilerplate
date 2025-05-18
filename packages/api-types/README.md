@@ -12,5 +12,7 @@ This package contains TypeScript interfaces for the health check endpoint respon
 import { HealthCheckResponse } from "@repo/api-types";
 
 // Now you can use the type definitions in your code
-const response: HealthCheckResponse = await fetch('/api/health').then(res => res.json());
+const response: HealthCheckResponse = await fetch("/api/health").then((res) =>
+  res.json(),
+);
 ```

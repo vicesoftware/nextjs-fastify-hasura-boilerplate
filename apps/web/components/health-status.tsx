@@ -1,15 +1,19 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { HealthCheckResponse, HealthIndicatorStatus } from '@repo/api-types';
-import styles from './health-status.module.css';
+import { useState, useEffect } from "react";
+import { HealthCheckResponse, HealthIndicatorStatus } from "@repo/api-types";
+import styles from "./health-status.module.css";
 
 type HealthStatusProps = {
   apiUrl?: string;
 };
 
-export default function HealthStatus({ apiUrl = 'http://localhost:4000/api/health' }: HealthStatusProps) {
-  const [healthData, setHealthData] = useState<HealthCheckResponse | null>(null);
+export default function HealthStatus({
+  apiUrl = "http://localhost:4000/api/health",
+}: HealthStatusProps) {
+  const [healthData, setHealthData] = useState<HealthCheckResponse | null>(
+    null,
+  );
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,11 +22,11 @@ export default function HealthStatus({ apiUrl = 'http://localhost:4000/api/healt
       try {
         setLoading(true);
         setError(null);
-        
+
         const response = await fetch(apiUrl, {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         });
 
@@ -33,17 +37,19 @@ export default function HealthStatus({ apiUrl = 'http://localhost:4000/api/healt
         const data = await response.json();
         setHealthData(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred",
+        );
       } finally {
         setLoading(false);
       }
     };
 
     fetchHealthStatus();
-    
+
     // Set up polling to refresh data every 30 seconds
     const intervalId = setInterval(fetchHealthStatus, 30000);
-    
+
     return () => clearInterval(intervalId);
   }, [apiUrl]);
 
@@ -60,11 +66,13 @@ export default function HealthStatus({ apiUrl = 'http://localhost:4000/api/healt
     return (
       <div className={`${styles.healthStatus} ${styles.error}`}>
         <div className={styles.statusHeader}>
-          <div className={`${styles.statusIndicator} ${styles.statusDown}`}></div>
+          <div
+            className={`${styles.statusIndicator} ${styles.statusDown}`}
+          ></div>
           <h3>API Health: Error</h3>
         </div>
         <p className={styles.errorMessage}>{error}</p>
-        <button 
+        <button
           className={styles.retryButton}
           onClick={() => {
             setLoading(true);
@@ -93,12 +101,12 @@ export default function HealthStatus({ apiUrl = 'http://localhost:4000/api/healt
 
   const getStatusColor = (status: HealthIndicatorStatus): string => {
     switch (status) {
-      case 'up':
-      case 'ok':
+      case "up":
+      case "ok":
         return styles.statusUp;
-      case 'down':
+      case "down":
         return styles.statusDown;
-      case 'shutting_down':
+      case "shutting_down":
         return styles.statusWarning;
       default:
         return styles.statusUnknown;
@@ -108,32 +116,40 @@ export default function HealthStatus({ apiUrl = 'http://localhost:4000/api/healt
   return (
     <div className={styles.healthStatus}>
       <div className={styles.statusHeader}>
-        <div className={`${styles.statusIndicator} ${getStatusColor(healthData.status)}`}></div>
+        <div
+          className={`${styles.statusIndicator} ${getStatusColor(healthData.status)}`}
+        ></div>
         <h3>API Health: {healthData.status.toUpperCase()}</h3>
       </div>
-      
+
       <div className={styles.metrics}>
         {healthData.details.uptime && (
           <div className={styles.metric}>
             <h4>Uptime</h4>
             <p>{formatTime(healthData.details.uptime.uptimeInSeconds)}</p>
-            <p className={styles.metricDetail}>Started: {formatDate(healthData.details.uptime.startedAt)}</p>
+            <p className={styles.metricDetail}>
+              Started: {formatDate(healthData.details.uptime.startedAt)}
+            </p>
           </div>
         )}
-        
+
         {healthData.details.memory_heap && (
           <div className={styles.metric}>
             <h4>Memory</h4>
-            <p className={`${styles.metricStatus} ${getStatusColor(healthData.details.memory_heap.status)}`}>
+            <p
+              className={`${styles.metricStatus} ${getStatusColor(healthData.details.memory_heap.status)}`}
+            >
               {healthData.details.memory_heap.status.toUpperCase()}
             </p>
           </div>
         )}
-        
+
         {healthData.details.disk && (
           <div className={styles.metric}>
             <h4>Disk</h4>
-            <p className={`${styles.metricStatus} ${getStatusColor(healthData.details.disk.status)}`}>
+            <p
+              className={`${styles.metricStatus} ${getStatusColor(healthData.details.disk.status)}`}
+            >
               {healthData.details.disk.status.toUpperCase()}
             </p>
           </div>

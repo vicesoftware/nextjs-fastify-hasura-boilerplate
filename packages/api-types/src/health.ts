@@ -2,7 +2,7 @@
  * Status values for health check indicators
  * Includes all possible values from @nestjs/terminus
  */
-export type HealthIndicatorStatus = 'up' | 'down' | 'ok' | 'shutting_down';
+export type HealthIndicatorStatus = "up" | "down" | "ok" | "shutting_down";
 
 /**
  * Basic structure for any health indicator
