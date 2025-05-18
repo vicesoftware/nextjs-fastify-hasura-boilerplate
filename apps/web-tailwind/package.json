@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"next dev --turbopack --port 3001\" \"pnpm format:watch\"",
+    "dev": "concurrently \"next dev --turbopack --port 3002\" \"pnpm format:watch\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint --max-warnings 0",
