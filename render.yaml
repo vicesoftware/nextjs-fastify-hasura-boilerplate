@@ -15,7 +15,8 @@ services:
     buildCommand: |
         corepack enable
         pnpm install --frozen-lockfile
-        pnpm turbo run build --filter=web
+        pnpm add -g turbo
+        pnpm turbo build --filter=web
     startCommand: pnpm start
     healthCheckPath: /api/health
     envVars:
@@ -47,7 +48,8 @@ services:
     buildCommand: |
         corepack enable
         pnpm install --frozen-lockfile
-        pnpm turbo run build --filter=api
+        pnpm add -g turbo
+        pnpm turbo build --filter=api
     startCommand: pnpm start:prod
     healthCheckPath: /api/health
     envVars:
