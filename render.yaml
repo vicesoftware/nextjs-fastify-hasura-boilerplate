@@ -1,0 +1,82 @@
+# render.yaml
+services:
+  - type: web
+    name: web
+    env: node
+    buildFilter:
+      paths:
+        - apps/web/**
+        - packages/**
+        - turbo.json
+        - pnpm-lock.yaml
+        - pnpm-workspace.yaml
+    build:
+      command: |
+        npm install -g pnpm
+        pnpm install
+        pnpm build --filter=web
+    start: |
+      cd apps/web && 
+      pnpm start
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://api.onrender.com/api
+      - key: NODE_ENV
+        value: production
+    autoDeploy: true
+    caching:
+      paths:
+        - apps/web/node_modules
+        - apps/web/.next/cache
+
+  - type: web
+    name: api
+    env: node
+    buildFilter:
+      paths:
+        - apps/api/**
+        - packages/**
+        - turbo.json
+        - pnpm-lock.yaml
+        - pnpm-workspace.yaml
+    build:
+      command: |
+        npm install -g pnpm
+        pnpm install
+        pnpm build --filter=api
+    start: |
+      cd apps/api && 
+      pnpm start:prod
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: postgres-db
+          property: connectionString
+      - key: PORT
+        value: 4000
+      - key: NODE_ENV
+        value: production
+    healthCheckPath: /api/health
+    autoDeploy: true
+    addons:
+      - type: postgresql
+        name: postgres-db
+        plan: free
+        ipAllowList: []
+
+# Uncomment below to add Redis
+# - type: redis
+#   name: app-redis
+#   ipAllowList: []  # Only allow internal connections
+#   plan: free
+
+# Global build settings for Turbo acceleration
+envVars:
+  - key: TURBO_REMOTE_ONLY
+    value: "true"
+  - key: TURBO_TEAM
+    value: "your-team-name"  # Replace with your actual team name
+  - key: TURBO_TOKEN
+    sync: false  # Set this token in Render dashboard
+  - key: PNPM_VERSION
+    value: "8.6.0"  # Specify the version of pnpm to use
