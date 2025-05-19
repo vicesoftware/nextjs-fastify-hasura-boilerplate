@@ -21,17 +21,12 @@ services:
         cd packages/api-types && pnpm build
         # Build web app
         cd ../../apps/web && pnpm build
-    startCommand: cd apps/web && PORT=3000 pnpm start
+    startCommand: cd apps/web && PORT=10000 pnpm start
     healthCheckPath: /api/health
-    port: 3000
+    port: 10000
     envVars:
       - key: NEXT_PUBLIC_API_URL
-        fromService:
-          type: web
-          name: api
-          property: url
-          envVarKey: NEXT_PUBLIC_API_URL
-        suffix: /api
+        value: "https://api-nrnt.onrender.com/api"
       - key: NODE_ENV
         value: production
       - key: TURBO_REMOTE_ONLY
@@ -43,7 +38,7 @@ services:
       - key: PNPM_VERSION
         value: "9.0.0"
       - key: PORT
-        value: "3000"
+        value: "10000"
 
   - type: web
     name: api
