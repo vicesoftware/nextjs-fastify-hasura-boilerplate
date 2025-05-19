@@ -21,8 +21,9 @@ services:
         cd packages/api-types && pnpm build
         # Build web app
         cd ../../apps/web && pnpm build
-    startCommand: cd apps/web && pnpm start
+    startCommand: cd apps/web && PORT=3000 pnpm start
     healthCheckPath: /api/health
+    port: 3000
     envVars:
       - key: NEXT_PUBLIC_API_URL
         fromService:
@@ -41,6 +42,8 @@ services:
         sync: false
       - key: PNPM_VERSION
         value: "9.0.0"
+      - key: PORT
+        value: "3000"
 
   - type: web
     name: api
@@ -63,8 +66,9 @@ services:
         cd packages/api-types && pnpm build
         # Build API app
         cd ../../apps/api && pnpm build
-    startCommand: cd apps/api && pnpm start:prod
+    startCommand: cd apps/api && PORT=4000 pnpm start:prod
     healthCheckPath: /api/health
+    port: 4000
     envVars:
       - key: NODE_ENV
         value: production
