@@ -16,7 +16,7 @@ services:
         export NODE_ENV=production
         corepack enable
         # Install all dependencies including dev dependencies
-        NODE_ENV=development pnpm install
+        NODE_ENV=development pnpm install --no-frozen-lockfile
         # Build API types first
         cd packages/api-types && pnpm build
         # Build web app
@@ -53,7 +53,7 @@ services:
         export NODE_ENV=production
         corepack enable
         # Install all dependencies including dev dependencies
-        NODE_ENV=development pnpm install
+        NODE_ENV=development pnpm install --no-frozen-lockfile
         # Build API types first
         cd packages/api-types && pnpm build
         # Build API app

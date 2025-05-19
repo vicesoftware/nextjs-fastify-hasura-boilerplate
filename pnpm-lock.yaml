@@ -170,46 +170,6 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ui
       next:
-        specifier: ^15.3.0
-        version: 15.3.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      react:
-        specifier: ^19.1.0
-        version: 19.1.0
-      react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
-    devDependencies:
-      '@repo/eslint-config':
-        specifier: workspace:*
-        version: link:../../packages/eslint-config
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../../packages/typescript-config
-      '@types/node':
-        specifier: ^22.15.3
-        version: 22.15.3
-      '@types/react':
-        specifier: 19.1.0
-        version: 19.1.0
-      '@types/react-dom':
-        specifier: 19.1.1
-        version: 19.1.1(@types/react@19.1.0)
-      eslint:
-        specifier: ^9.26.0
-        version: 9.26.0(jiti@2.4.2)
-      typescript:
-        specifier: 5.8.2
-        version: 5.8.2
-
-  apps/web-tailwind:
-    dependencies:
-      '@repo/api-types':
-        specifier: workspace:*
-        version: link:../../packages/api-types
-      '@repo/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
-      next:
         specifier: 15.3.2
         version: 15.3.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react:
@@ -239,7 +199,7 @@ importers:
         version: 19.1.1(@types/react@19.1.0)
       autoprefixer:
         specifier: ^10.4.15
-        version: 10.4.21(postcss@8.4.31)
+        version: 10.4.21(postcss@8.5.3)
       concurrently:
         specifier: ^8.2.0
         version: 8.2.2
@@ -254,7 +214,7 @@ importers:
         version: 7.1.0
       postcss:
         specifier: ^8.4.29
-        version: 8.4.31
+        version: 8.5.3
       prettier:
         specifier: ^3.0.0
         version: 3.5.3
@@ -4029,6 +3989,7 @@ packages:
   nanoid@3.3.11:
     resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
+    hasBin: true
 
   napi-postinstall@0.2.4:
     resolution: {integrity: sha512-ZEzHJwBhZ8qQSbknHqYcdtQVr8zUgGyM/q6h6qAyhtyVMNrSgDhrC4disf03dYW0e+czXyLnZINnCTEkWy0eJg==}
@@ -7210,14 +7171,14 @@ snapshots:
 
   asynckit@0.4.0: {}
 
-  autoprefixer@10.4.21(postcss@8.4.31):
+  autoprefixer@10.4.21(postcss@8.5.3):
     dependencies:
       browserslist: 4.24.5
       caniuse-lite: 1.0.30001718
       fraction.js: 4.3.7
       normalize-range: 0.1.2
       picocolors: 1.1.1
-      postcss: 8.4.31
+      postcss: 8.5.3
       postcss-value-parser: 4.2.0
 
   available-typed-arrays@1.0.7:
@@ -7760,7 +7721,8 @@ snapshots:
 
   depd@2.0.0: {}
 
-  detect-libc@2.0.3: {}
+  detect-libc@2.0.3:
+    optional: true
 
   detect-libc@2.0.4: {}
 
@@ -9356,7 +9318,7 @@ snapshots:
 
   lightningcss@1.30.1:
     dependencies:
-      detect-libc: 2.0.3
+      detect-libc: 2.0.4
     optionalDependencies:
       lightningcss-darwin-arm64: 1.30.1
       lightningcss-darwin-x64: 1.30.1

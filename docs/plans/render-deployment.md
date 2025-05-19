@@ -238,17 +238,55 @@ If your application requires Redis for caching, session management, or real-time
    - Verify all dependencies are correctly specified in package.json
    - Ensure build scripts in package.json are correctly defined
 
-2. **Runtime Errors**
+2. **TypeScript Configuration Issues**
+   - If you encounter TypeScript errors like `Cannot find name 'Map'` during build:
+     - Update the `lib` settings in base TypeScript configuration:
+       ```json
+       // packages/typescript-config/base.json
+       {
+         "compilerOptions": {
+           "lib": ["es6", "dom", "dom.iterable", "esnext"],
+           "target": "es2017"
+         }
+       }
+       ```
+     - Ensure proper TypeScript version compatibility between packages
+     - Consider updating build commands to explicitly specify TypeScript options:
+       ```bash
+       npx tsc --lib es6,dom,esnext --target es2017
+       ```
+
+3. **Workspace Package Resolution**
+   - If shared packages aren't resolved correctly during build:
+     - Update the build command to use `--no-frozen-lockfile` for Render builds:
+       ```yaml
+       build:
+         command: |
+           npm install -g pnpm@9.0.0
+           NODE_ENV=development pnpm install --no-frozen-lockfile
+           cd packages/api-types && pnpm build
+           # Continue with other builds...
+       ```
+     - Ensure workspace references use the correct format: `"workspace:*"`
+     - Verify the build order respects package dependencies
+
+4. **pnpm Lock File Sync Issues**
+   - If you see errors about outdated lockfiles:
+     - Update pnpm-lock.yaml before deployment with `pnpm install`
+     - Use `--no-frozen-lockfile` during CI/CD builds
+     - Consider disabling lockfile validation for specific environments
+
+5. **Runtime Errors**
    - Review Render logs for error messages
    - Verify environment variables are correctly set
    - Check for port conflicts or binding issues
 
-3. **Database Connection Issues**
+6. **Database Connection Issues**
    - Ensure DATABASE_URL is correctly configured
    - Check database credentials and access permissions
    - Verify database schema migrations have been applied
 
-4. **Service Communication Problems**
+7. **Service Communication Problems**
    - Confirm internal URLs are correctly formatted
    - Verify that services can communicate over Render's internal network
    - Check for CORS configuration issues in the NestJS backend
@@ -276,10 +314,43 @@ If your application requires Redis for caching, session management, or real-time
    - Added pnpm-specific build commands
    - Added health check path configuration
 
+3. Updated pnpm-lock.yaml to ensure consistency with package.json:
+   - Ran `pnpm install` to update the lock file
+   - Addressed warnings about peer dependencies
+
+4. Added TypeScript configuration troubleshooting guidance:
+   - Solutions for "Cannot find name 'Map'" errors
+   - Workspace package resolution fixes
+   - pnpm lockfile synchronization strategies
+
+5. Committed and pushed changes to trigger a build in Render
+
 🔄 **Next Steps:**
 
-1. Commit the render.yaml file to the repository
-2. Connect repository to Render
+1. Update build script in render.yaml to use `--no-frozen-lockfile`:
+   ```yaml
+   build:
+     command: |
+       npm install -g pnpm@9.0.0
+       # Install all dependencies including dev dependencies
+       NODE_ENV=development pnpm install --no-frozen-lockfile
+       # Build API types first
+       cd packages/api-types && pnpm build
+       # Build API app
+       cd ../../apps/api && pnpm build
+   ```
+
+2. Consider updating the base TypeScript configuration to ensure ES6+ compatibility:
+   ```json
+   // packages/typescript-config/base.json
+   {
+     "compilerOptions": {
+       "lib": ["es6", "dom", "dom.iterable", "esnext"],
+       "target": "es2017"
+     }
+   }
+   ```
+
 3. Verify successful deployment of services
 4. Test inter-service communication
 5. Add Redis integration when needed (see docs/redis-integration-guide.md)
