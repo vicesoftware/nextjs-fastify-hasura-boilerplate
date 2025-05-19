@@ -25,7 +25,12 @@ services:
     healthCheckPath: /api/health
     envVars:
       - key: NEXT_PUBLIC_API_URL
-        value: ${services.api.url}/api
+        fromService:
+          type: web
+          name: api
+          property: url
+          envVarKey: NEXT_PUBLIC_API_URL
+        suffix: /api
       - key: NODE_ENV
         value: production
       - key: TURBO_REMOTE_ONLY
