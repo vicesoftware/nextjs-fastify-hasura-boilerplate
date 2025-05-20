@@ -10,5 +10,13 @@ const HealthStatus = dynamic(() => import("./health-status"), {
 
 export default function HealthStatusWrapper() {
   const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/health`;
+  
+  // Add detailed logging about the API URL construction
+  console.log("HealthStatusWrapper - API URL Details:");
+  console.log("Raw env var:", process.env.NEXT_PUBLIC_API_URL);
+  console.log("Constructed apiUrl:", apiUrl);
+  console.log("URL encoding test:", encodeURIComponent("${services.api.url}"));
+  console.log("String construction test:", `${process.env.NEXT_PUBLIC_API_URL || "fallback"}/health`);
+  
   return <HealthStatus apiUrl={apiUrl} />;
 }

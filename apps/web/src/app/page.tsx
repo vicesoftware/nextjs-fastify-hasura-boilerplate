@@ -1,7 +1,24 @@
+"use client";
+
 import Image from "next/image";
 import HealthStatusWrapper from "../components/health-status-wrapper";
+import { useEffect } from "react";
 
 export default function Home() {
+  // Log environment variables for debugging
+  useEffect(() => {
+    console.log("Environment Variables Debug Info:");
+    console.log("NODE_ENV:", process.env.NODE_ENV);
+    console.log("NEXT_PUBLIC_API_URL:", process.env.NEXT_PUBLIC_API_URL);
+    console.log("Raw value check:", JSON.stringify(process.env.NEXT_PUBLIC_API_URL));
+    // Check for URL encoding issues
+    if (process.env.NEXT_PUBLIC_API_URL?.includes("%7B")) {
+      console.log("WARNING: URL contains encoded '{' character (%7B)");
+    }
+    if (process.env.NEXT_PUBLIC_API_URL?.includes("%7D")) {
+      console.log("WARNING: URL contains encoded '}' character (%7D)");
+    }
+  }, []);
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
