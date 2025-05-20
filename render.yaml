@@ -14,7 +14,13 @@ services:
         - "pnpm*"
     buildCommand: |
         export NODE_ENV=production
-        export NEXT_PUBLIC_API_URL=https://api-nrnt.onrender.com/api
+        export NEXT_PUBLIC_API_URL="https://api-nrnt.onrender.com/api"
+        # Validate the API URL has been properly set
+        echo "Validating API URL: $NEXT_PUBLIC_API_URL"
+        if [[ "$NEXT_PUBLIC_API_URL" == *"$"* ]]; then
+          echo "ERROR: Variable contains unprocessed template"
+          exit 1
+        fi
         corepack enable
         # Install all dependencies including dev dependencies
         NODE_ENV=development pnpm install --no-frozen-lockfile
@@ -26,9 +32,6 @@ services:
     healthCheckPath: /api/health
     port: 10000
     envVars:
-      - key: NEXT_PUBLIC_API_URL
-        value: "https://api-nrnt.onrender.com/api"
-        phase: build
       - key: NODE_ENV
         value: production
       - key: TURBO_REMOTE_ONLY
