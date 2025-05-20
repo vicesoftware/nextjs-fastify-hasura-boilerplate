@@ -327,32 +327,99 @@ If your application requires Redis for caching, session management, or real-time
 
 🔄 **Next Steps:**
 
-1. Update build script in render.yaml to use `--no-frozen-lockfile`:
-   ```yaml
-   build:
-     command: |
-       npm install -g pnpm@9.0.0
-       # Install all dependencies including dev dependencies
-       NODE_ENV=development pnpm install --no-frozen-lockfile
-       # Build API types first
-       cd packages/api-types && pnpm build
-       # Build API app
-       cd ../../apps/api && pnpm build
-   ```
+1. Implement proper handling of shared `api-types` package changes across monorepo services:
 
-2. Consider updating the base TypeScript configuration to ensure ES6+ compatibility:
-   ```json
-   // packages/typescript-config/base.json
-   {
-     "compilerOptions": {
-       "lib": ["es6", "dom", "dom.iterable", "esnext"],
-       "target": "es2017"
+## Shared Package Dependency Management
+
+To handle shared `api-types` package changes across monorepo services in Render, implement this dual-layer dependency management:
+
+### 1. Render Configuration (render.yaml)
+```yaml
+services:
+  - type: web
+    name: web-app
+    rootDir: "apps/web"
+    buildFilters:
+      includedPaths:
+        - "apps/web/**"
+        - "packages/api-types/**"  # Monitor shared types
+    buildCommand: "npm install && npm run build"
+
+  - type: web
+    name: api-service
+    rootDir: "apps/api"
+    buildFilters:
+      includedPaths:
+        - "apps/api/**"
+        - "packages/api-types/**"  # Monitor shared types
+    buildCommand: "npm install && npm run build"
+```
+
+### 2. Turborepo Configuration (turbo.json)
+```json
+{
+  "pipeline": {
+    "build": {
+      "dependsOn": [
+        "^build",
+        "api-types#build"  # Explicit package dependency
+      ],
+      "outputs": ["dist/**"]
+    },
+    "api-types#build": {
+      "outputs": ["dist/**"]
+    }
+  }
+}
+```
+
+### Dependency Matrix
+| Changed Path                | Web Rebuild | API Rebuild |
+|-----------------------------|-------------|-------------|
+| `apps/web/components/...`   | ✅          | ❌          |
+| `apps/api/routes/...`       | ❌          | ✅          |
+| `packages/api-types/...`    | ✅          | ✅          |
+
+### Key Mechanisms
+1. **Render Build Filters**
+   - `includedPaths` watches both service-specific and shared package directories
+   - Changes to `api-types` trigger rebuilds for both web and API services
+
+2. **Turborepo Task Dependencies**
+   - `dependsOn` ensures `api-types` builds before dependent services
+   - Cross-workspace references maintained through package.json entries:
+     ```json
+     // apps/web/package.json
+     {
+       "dependencies": {
+         "api-types": "workspace:*"
+       }
      }
-   }
+     ```
+
+### Verification Steps
+1. Make a change to `packages/api-types/src/types.ts`
+2. Check Turborepo build output:
+   ```bash
+   turbo run build --dry=json
+   ```
+   Should show both `api-types`, `web`, and `api` in build plan
+
+3. Render build logs should display:
+   ```
+   Detected changes in: packages/api-types/src/types.ts
+   Triggering builds for: web-app, api-service
    ```
 
-3. Verify successful deployment of services
-4. Test inter-service communication
-5. Add Redis integration when needed (see docs/redis-integration-guide.md)
+This configuration ensures atomic deployments while maintaining cross-service type consistency. For monorepos with deep dependencies, consider adding a global watch pattern in render.yaml:
+```yaml
+buildFilters:
+  includedPaths:
+    - "packages/shared/**"  # Catch-all for shared resources
+```
+
+2. Verify successful deployment of services
+3. Test inter-service communication
+4. Add Redis integration when needed (see docs/redis-integration-guide.md)
 
 Note: The implementation uses pnpm instead of npm as the package manager, since this is what the project uses locally.
