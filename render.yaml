@@ -27,6 +27,7 @@ services:
     envVars:
       - key: NEXT_PUBLIC_API_URL
         value: "https://api-nrnt.onrender.com/api"
+        phase: build
       - key: NODE_ENV
         value: production
       - key: TURBO_REMOTE_ONLY
