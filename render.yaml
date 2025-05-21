@@ -14,15 +14,9 @@ services:
         - "pnpm*"
     buildCommand: |
         export NODE_ENV=production
-        # Explicitly define the API URL without variables
-        export NEXT_PUBLIC_API_URL="https://api-nrnt.onrender.com/api"
-        echo "Using API URL: $NEXT_PUBLIC_API_URL"
-        # Write to .env.production.local to ensure Next.js picks it up
-        echo "NEXT_PUBLIC_API_URL=https://api-nrnt.onrender.com/api" > apps/web/.env.production.local
-        cat apps/web/.env.production.local
         corepack enable
-        # Install all dependencies including dev dependencies
-        NODE_ENV=development pnpm install --no-frozen-lockfile
+        # Install dependencies
+        pnpm install --no-frozen-lockfile
         # Build API types first
         cd packages/api-types && pnpm build
         # Build web app
@@ -31,6 +25,8 @@ services:
     healthCheckPath: /api/health
     port: 10000
     envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: "https://api-82a7.onrender.com/api"
       - key: NODE_ENV
         value: production
       - key: TURBO_REMOTE_ONLY
@@ -59,8 +55,8 @@ services:
     buildCommand: |
         export NODE_ENV=production
         corepack enable
-        # Install all dependencies including dev dependencies
-        NODE_ENV=development pnpm install --no-frozen-lockfile
+        # Install dependencies
+        pnpm install --no-frozen-lockfile
         # Build API types first
         cd packages/api-types && pnpm build
         # Build API app
