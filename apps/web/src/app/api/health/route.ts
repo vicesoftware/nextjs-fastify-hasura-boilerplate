@@ -1,6 +1,14 @@
 import { NextResponse } from "next/server";
 import packageJson from "../../../../package.json";
 import rootPackageJson from "../../../../../../package.json";
+import { corsHeaders, handleOptions } from "../cors";
+
+/**
+ * OPTIONS handler for CORS preflight requests
+ */
+export async function OPTIONS() {
+  return handleOptions();
+}
 
 /**
  * Health check endpoint for the Next.js web app
@@ -34,5 +42,9 @@ export async function GET() {
     },
   };
 
-  return NextResponse.json(healthData, { status: 200 });
+  // Return response with CORS headers
+  return NextResponse.json(healthData, { 
+    status: 200,
+    headers: corsHeaders
+  });
 }
