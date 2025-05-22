@@ -26,6 +26,12 @@ services:
     envVars:
       - key: NEXT_PUBLIC_API_URL
         value: "https://api-82a7.onrender.com/api"
+      - key: NEXT_PUBLIC_API_URL_NESTJS
+        value: "https://api-82a7.onrender.com/api"
+      - key: NEXT_PUBLIC_API_URL_FASTIFY
+        value: "https://api-fastify-xxxx.onrender.com/api"
+      - key: NEXT_PUBLIC_API_URL_NEXTJS
+        value: "/api"
       - key: NODE_ENV
         value: production
       - key: TURBO_REMOTE_ONLY
@@ -38,6 +44,9 @@ services:
         value: "9.0.0"
       - key: PORT
         value: "10000"
+      # Toggle to switch between API implementations
+      - key: API_IMPLEMENTATION
+        value: "fastify" # Options: "nestjs", "fastify", "nextjs"
 
   - type: web
     name: api
@@ -79,6 +88,49 @@ services:
         sync: false
       - key: PNPM_VERSION
         value: "9.0.0"
+
+  - type: web
+    name: api-fastify
+    env: node
+    region: ohio
+    plan: free
+    rootDir: .
+    buildFilter:
+      paths:
+        - "apps/api-fastify/**"
+        - "packages/**"
+        - "turbo.json"
+        - "pnpm*"
+    buildCommand: |
+        export NODE_ENV=production
+        corepack enable
+        # Install dependencies
+        pnpm install --no-frozen-lockfile
+        # Build API types first
+        cd packages/api-types && pnpm build
+        # Build Fastify API app
+        cd ../../apps/api-fastify && pnpm build
+    startCommand: cd apps/api-fastify && PORT=5001 pnpm start
+    healthCheckPath: /api/health
+    port: 5001
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: WEB_URL
+        fromService:
+          type: web
+          name: web
+          property: url
+      - key: TURBO_REMOTE_ONLY
+        value: "true"
+      - key: TURBO_TEAM
+        value: "your-team-name"
+      - key: TURBO_TOKEN
+        sync: false
+      - key: PNPM_VERSION
+        value: "9.0.0"
+      - key: PORT
+        value: "5000"
 
 # Uncomment below to add Redis
 # - type: redis

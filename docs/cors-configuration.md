@@ -4,9 +4,10 @@ This document explains how CORS (Cross-Origin Resource Sharing) is configured in
 
 ## Overview
 
-CORS is configured in two places:
+CORS is configured in three places:
 1. **NestJS API Service**: Configures server-side CORS to allow requests from the Next.js web application
-2. **Next.js API Routes**: Configures CORS headers for API routes within the Next.js app
+2. **Fastify API Service**: Configures server-side CORS to allow requests from the Next.js web application
+3. **Next.js API Routes**: Configures CORS headers for API routes within the Next.js app
 
 ## NestJS API Configuration
 
@@ -35,6 +36,38 @@ app.enableCors({
   origin: allowedOrigins,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   credentials: true,
+});
+```
+
+## Fastify API Configuration
+
+The Fastify API service follows a similar approach, allowing cross-origin requests from:
+- `http://localhost:3000` (local development)
+- The deployed web application URL from Render
+- Any URL specified in the `WEB_URL` environment variable
+
+The configuration is in `apps/api-fastify/src/index.ts`:
+
+```typescript
+// Configure CORS
+// Get allowed origins from environment variables
+const allowedOrigins = [
+  'http://localhost:3000',  // Local Next.js development
+  'https://web-ubxh.onrender.com'  // Production web app
+];
+
+// Add WEB_URL from environment if it exists
+if (process.env.WEB_URL) {
+  allowedOrigins.push(process.env.WEB_URL);
+  console.log(`Adding ${process.env.WEB_URL} to CORS allowed origins`);
+}
+
+// Register CORS plugin
+server.register(cors, {
+  origin: allowedOrigins,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
 });
 ```
 
