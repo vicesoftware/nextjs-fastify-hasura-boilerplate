@@ -13,7 +13,6 @@ services:
         - "turbo.json"
         - "pnpm*"
     buildCommand: |
-        export NODE_ENV=production
         corepack enable
         # Install dependencies
         pnpm install --no-frozen-lockfile
