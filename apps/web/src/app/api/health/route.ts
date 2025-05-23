@@ -15,9 +15,64 @@ export async function OPTIONS() {
  * GET /api/health
  */
 export async function GET() {
+  // Validate required environment variables
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!apiUrl) {
+    const errorData = {
+      status: "down",
+      timestamp: new Date().toISOString(),
+      error: "NEXT_PUBLIC_API_URL environment variable is required",
+      details: {
+        configuration: {
+          status: "down",
+          error: "Missing required environment variables"
+        }
+      }
+    };
+    return NextResponse.json(errorData, { 
+      status: 503,
+      headers: corsHeaders
+    });
+  }
+
+  // Get API health status (including database)
+  let apiHealth = null;
+  let overallStatus = "up";
+  
+  try {
+    const response = await fetch(`${apiUrl}/health`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      },
+      // Set a timeout for the API call
+      signal: AbortSignal.timeout(5000)
+    });
+    
+    if (response.ok) {
+      apiHealth = await response.json();
+      // If API reports down status, mark overall as down
+      if (apiHealth.status === 'down') {
+        overallStatus = 'down';
+      }
+    } else {
+      overallStatus = 'down';
+      apiHealth = {
+        status: 'down',
+        error: `API returned ${response.status}: ${response.statusText}`
+      };
+    }
+  } catch (error) {
+    overallStatus = 'down';
+    apiHealth = {
+      status: 'down',
+      error: error.message || 'Failed to connect to API'
+    };
+  }
+
   // Include basic health information including version from package.json
   const healthData = {
-    status: "up",
+    status: overallStatus,
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV,
     uptime: process.uptime(),
@@ -33,6 +88,7 @@ export async function GET() {
       disk: {
         status: "up",
       },
+      api: apiHealth,
     },
     version: {
       app: packageJson.version,
@@ -43,8 +99,9 @@ export async function GET() {
   };
 
   // Return response with CORS headers
+  const responseStatus = overallStatus === 'down' ? 503 : 200;
   return NextResponse.json(healthData, { 
-    status: 200,
+    status: responseStatus,
     headers: corsHeaders
   });
 }

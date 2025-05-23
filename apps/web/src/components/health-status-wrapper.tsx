@@ -9,47 +9,17 @@ const HealthStatus = dynamic(() => import("./health-status"), {
 });
 
 export default function HealthStatusWrapper() {
-  // Detect which API implementation we're using
+  // Use the web app's own health endpoint which aggregates API data including database status
+  const apiUrl = "/api/health";
+
+  // Detect which API implementation the web app is configured to use
   const apiImplementation =
-    process.env.NEXT_PUBLIC_API_IMPLEMENTATION || "nestjs";
-
-  // Determine API URL based on implementation
-  let baseApiUrl;
-
-  switch (apiImplementation) {
-    case "fastify":
-      baseApiUrl =
-        process.env.NEXT_PUBLIC_API_URL_FASTIFY ||
-        process.env.NEXT_PUBLIC_API_URL;
-      break;
-    case "nextjs":
-      baseApiUrl =
-        process.env.NEXT_PUBLIC_API_URL_NEXTJS ||
-        process.env.NEXT_PUBLIC_API_URL;
-      break;
-    case "nestjs":
-    default:
-      baseApiUrl =
-        process.env.NEXT_PUBLIC_API_URL_NESTJS ||
-        process.env.NEXT_PUBLIC_API_URL;
-      break;
-  }
-
-  // Construct the full API URL
-  const apiUrl = `${baseApiUrl}/health`;
+    process.env.NEXT_PUBLIC_API_IMPLEMENTATION || "fastify";
 
   // Log API connection details
-  console.log("HealthStatusWrapper - API URL Details:");
-  console.log("API Implementation:", apiImplementation);
-  console.log("Base API URL:", baseApiUrl);
-  console.log("Constructed apiUrl:", apiUrl);
+  console.log("HealthStatusWrapper - Using web app health endpoint");
+  console.log("Health URL:", apiUrl);
+  console.log("Backend API Implementation:", apiImplementation);
 
-  return (
-    <div>
-      <HealthStatus apiUrl={apiUrl} />
-      <div className="mt-2 text-xs text-gray-500 text-center">
-        API Implementation: {apiImplementation}
-      </div>
-    </div>
-  );
+  return <HealthStatus apiUrl={apiUrl} />;
 }

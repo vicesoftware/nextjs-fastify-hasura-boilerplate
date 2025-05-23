@@ -1,6 +1,7 @@
 import fastify from 'fastify';
 import cors from '@fastify/cors';
 import { HealthCheckResponse } from '@repo/api-types';
+import { checkDbConnection } from './db';
 
 // Start time for uptime calculation
 const startTime = new Date();
@@ -41,8 +42,11 @@ server.get('/api/health', async (): Promise<HealthCheckResponse> => {
   const packageJson = require('../package.json');
   const rootPackageJson = require('../../../package.json');
 
+  // Check database connection
+  const dbStatus = await checkDbConnection();
+  
   return {
-    status: 'up',
+    status: dbStatus.status === 'down' ? 'down' : 'up',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV,
     details: {
@@ -57,6 +61,7 @@ server.get('/api/health', async (): Promise<HealthCheckResponse> => {
       disk: {
         status: 'up',
       },
+      database: dbStatus,
     },
     version: {
       app: packageJson.version,
@@ -70,7 +75,7 @@ server.get('/api/health', async (): Promise<HealthCheckResponse> => {
 // Start the server
 const start = async () => {
   try {
-    const port = process.env.PORT ? parseInt(process.env.PORT) : 5001;
+    const port = process.env.PORT ? parseInt(process.env.PORT) : 4000;
     await server.listen({ port, host: '0.0.0.0' });
     console.log(`Server listening on ${server.server.address().port}`);
   } catch (err) {

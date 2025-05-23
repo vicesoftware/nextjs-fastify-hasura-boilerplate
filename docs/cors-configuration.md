@@ -4,49 +4,18 @@ This document explains how CORS (Cross-Origin Resource Sharing) is configured in
 
 ## Overview
 
-CORS is configured in three places:
-1. **NestJS API Service**: Configures server-side CORS to allow requests from the Next.js web application
-2. **Fastify API Service**: Configures server-side CORS to allow requests from the Next.js web application
-3. **Next.js API Routes**: Configures CORS headers for API routes within the Next.js app
-
-## NestJS API Configuration
-
-The NestJS API service is configured to allow cross-origin requests from:
-- `http://localhost:3000` (local development)
-- The deployed web application URL from Render
-- Any URL specified in the `WEB_URL` environment variable
-
-The configuration is in `apps/api/src/main.ts`:
-
-```typescript
-// Enable CORS for Next.js frontend
-// Get allowed origins from environment variables
-const allowedOrigins = [
-  'http://localhost:3000',
-  'https://web-ubxh.onrender.com'
-];
-
-// Add WEB_URL from environment if it exists
-if (process.env.WEB_URL) {
-  allowedOrigins.push(process.env.WEB_URL);
-  console.log(`Adding ${process.env.WEB_URL} to CORS allowed origins`);
-}
-
-app.enableCors({
-  origin: allowedOrigins,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  credentials: true,
-});
-```
+CORS is configured in two places:
+1. **Fastify API Service**: Configures server-side CORS to allow requests from the Next.js web application
+2. **Next.js API Routes**: Configures CORS headers for API routes within the Next.js app
 
 ## Fastify API Configuration
 
-The Fastify API service follows a similar approach, allowing cross-origin requests from:
+The Fastify API service allows cross-origin requests from:
 - `http://localhost:3000` (local development)
 - The deployed web application URL from Render
 - Any URL specified in the `WEB_URL` environment variable
 
-The configuration is in `apps/api-fastify/src/index.ts`:
+The configuration is in `apps/api/src/index.ts`:
 
 ```typescript
 // Configure CORS
@@ -140,7 +109,20 @@ The health check feature in the web application makes cross-origin requests to t
 
 ```typescript
 // In apps/web/src/components/health-status-wrapper.tsx
-const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/health`;
+// Determine API URL based on implementation
+let baseApiUrl;
+
+switch (apiImplementation) {
+  case "fastify":
+    baseApiUrl = process.env.NEXT_PUBLIC_API_URL_FASTIFY || process.env.NEXT_PUBLIC_API_URL;
+    break;
+  case "nextjs":
+    baseApiUrl = process.env.NEXT_PUBLIC_API_URL_NEXTJS || process.env.NEXT_PUBLIC_API_URL;
+    break;
+}
+
+// Construct the full API URL
+const apiUrl = `${baseApiUrl}/health`;
 return <HealthStatus apiUrl={apiUrl} />;
 ```
 

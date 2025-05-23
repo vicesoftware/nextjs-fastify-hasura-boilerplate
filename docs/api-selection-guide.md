@@ -6,9 +6,8 @@ This project supports multiple API implementations that can be switched between 
 
 The project currently supports the following API implementations:
 
-1. **Fastify API** (default) - Located in `apps/api-fastify`
-2. **NestJS API** - Located in `apps/api` 
-3. **Next.js API Routes** - Built into the web app in `apps/web/src/app/api`
+1. **Fastify API** (default) - Located in `apps/api`
+2. **Next.js API Routes** - Built into the web app in `apps/web/src/app/api`
 
 ## Local Development
 
@@ -18,12 +17,12 @@ To run the Fastify API locally:
 
 ```bash
 # From the project root
-cd apps/api-fastify
+cd apps/api
 pnpm install
 pnpm dev
 ```
 
-The Fastify API will be available at http://localhost:5001/api/health
+The Fastify API will be available at http://localhost:4000/api/health
 
 ### Running the Next.js App with Different API Backends
 
@@ -34,17 +33,13 @@ You can configure which API backend to use by setting the `NEXT_PUBLIC_API_URL` 
 cd apps/web
 API_IMPLEMENTATION=fastify pnpm dev
 
-# Use the local NestJS API
-cd apps/web
-API_IMPLEMENTATION=nestjs pnpm dev
-
 # Use the local Next.js API routes
 cd apps/web
 API_IMPLEMENTATION=nextjs pnpm dev
 
 # You can also override the specific API URL if needed
 cd apps/web
-API_IMPLEMENTATION=fastify NEXT_PUBLIC_API_URL_FASTIFY=http://localhost:5001/api pnpm dev
+API_IMPLEMENTATION=fastify NEXT_PUBLIC_API_URL_FASTIFY=http://localhost:4000/api pnpm dev
 ```
 
 ## Deployment Configuration
@@ -55,7 +50,7 @@ In the deployment configuration (render.yaml), you can control which API impleme
 # In render.yaml
 envVars:
   - key: API_IMPLEMENTATION
-    value: "nestjs" # Options: "nestjs", "fastify", "nextjs"
+    value: "fastify" # Options: "fastify", "nextjs"
 ```
 
 This value is then passed to the Next.js app to display which API implementation is currently being used.
@@ -66,8 +61,7 @@ The web app connects to the API using a combination of `API_IMPLEMENTATION` and 
 
 ```yaml
 # Environment variables for different API implementations
-NEXT_PUBLIC_API_URL_NESTJS: https://api-82a7.onrender.com/api
-NEXT_PUBLIC_API_URL_FASTIFY: https://api-fastify-xxxx.onrender.com/api
+NEXT_PUBLIC_API_URL_FASTIFY: https://api-82a7.onrender.com/api
 NEXT_PUBLIC_API_URL_NEXTJS: /api
 
 # The implementation to use
@@ -80,17 +74,13 @@ The web app will automatically use the correct API URL based on the selected imp
 
 All API implementations provide the same core functionality but may have different performance characteristics or implementation details:
 
-1. **NestJS API**
-   - Full-featured framework with dependency injection
-   - Built-in health monitoring
-   - More heavyweight solution
-
-2. **Fastify API**
+1. **Fastify API**
    - Lightweight and high-performance
    - Simpler implementation
    - Good for microservices
+   - Standalone API server
 
-3. **Next.js API Routes**
+2. **Next.js API Routes**
    - Integrated with the web app
    - Serverless by default
    - Good for simple APIs without separate deployment

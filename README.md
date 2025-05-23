@@ -60,7 +60,14 @@ pnpm install
 
 ### Development
 
-Start all applications at once:
+First, start the PostgreSQL database:
+
+```bash
+# Start PostgreSQL in Docker
+pnpm db:start
+```
+
+Then start all applications at once:
 
 ```bash
 pnpm dev
@@ -77,6 +84,16 @@ pnpm dev --filter=api
 
 # Documentation site
 pnpm dev --filter=docs
+```
+
+You can also manage the database with these commands:
+
+```bash
+# Stop the database
+pnpm db:stop
+
+# Reset the database (deletes all data)
+pnpm db:reset
 ```
 
 ### Build
@@ -277,14 +294,20 @@ envVars:
       property: url
 ```
 
-#### Database Configuration (When Added)
+#### Database Configuration
 
-When adding a database, you'll need to configure these additional variables:
+The following environment variables are used for PostgreSQL database connection:
 
-| Variable | Description |
-|----------|-------------|
-| `DATABASE_URL` | Connection string for PostgreSQL |
-| `DATABASE_SSL` | Whether to use SSL for database connection (`true`/`false`) |
+| Variable | Development | Production | Description |
+|----------|-------------|------------|-------------|
+| `DATABASE_URL` | `postgres://postgres:postgres@localhost:25432/app` | From Render service | PostgreSQL connection string |
+| `POSTGRES_USER` | `postgres` | From Render service | Database username |
+| `POSTGRES_PASSWORD` | `postgres` | From Render service | Database password |
+| `POSTGRES_DB` | `app` | From Render service | Database name |
+| `POSTGRES_HOST` | `localhost` | From Render service | Database host |
+| `POSTGRES_PORT` | `25432` | From Render service | Database port |
+
+For local development, these are configured in the docker-compose.yml file. In production, they are automatically configured by the Render PostgreSQL service.
 
 ### Utilities
 

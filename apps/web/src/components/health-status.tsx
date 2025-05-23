@@ -119,9 +119,9 @@ export default function HealthStatus({ apiUrl }: HealthStatusProps) {
         </h3>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {healthData.details?.uptime && (
-          <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
+          <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-md">
             <h4 className="text-sm font-semibold text-foreground/80 m-0 mb-2">
               Uptime
             </h4>
@@ -135,7 +135,7 @@ export default function HealthStatus({ apiUrl }: HealthStatusProps) {
         )}
 
         {healthData.details?.memory_heap && (
-          <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
+          <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-md">
             <h4 className="text-sm font-semibold text-foreground/80 m-0 mb-2">
               Memory
             </h4>
@@ -148,7 +148,7 @@ export default function HealthStatus({ apiUrl }: HealthStatusProps) {
         )}
 
         {healthData.details?.disk && (
-          <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
+          <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-md">
             <h4 className="text-sm font-semibold text-foreground/80 m-0 mb-2">
               Disk
             </h4>
@@ -159,6 +159,36 @@ export default function HealthStatus({ apiUrl }: HealthStatusProps) {
             </p>
           </div>
         )}
+
+        {healthData.details?.api?.details?.database && (
+          <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-md">
+            <h4 className="text-sm font-semibold text-foreground/80 m-0 mb-2">
+              Database
+            </h4>
+            <p
+              className={`text-sm font-semibold ${getStatusColorClass(healthData.details.api.details.database.status)} bg-opacity-10 dark:bg-opacity-20 inline-block px-2 py-1 rounded mb-2`}
+            >
+              {healthData.details.api.details.database.status.toUpperCase()}
+            </p>
+            {healthData.details.api.details.database.timestamp && (
+              <p className="text-xs opacity-70 m-0">
+                Last checked:{" "}
+                {formatDate(healthData.details.api.details.database.timestamp)}
+              </p>
+            )}
+            {healthData.details.api.details.database.error && (
+              <p className="text-xs text-red-500 dark:text-red-400 mt-1 m-0">
+                Error: {healthData.details.api.details.database.error}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-600">
+        <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+          Health aggregated via web app
+        </p>
       </div>
     </div>
   );
