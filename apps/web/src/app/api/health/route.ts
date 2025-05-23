@@ -66,7 +66,7 @@ export async function GET() {
     overallStatus = 'down';
     apiHealth = {
       status: 'down',
-      error: error.message || 'Failed to connect to API'
+      error: error instanceof Error ? error.message : 'Failed to connect to API'
     };
   }
 

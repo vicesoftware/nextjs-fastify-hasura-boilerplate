@@ -1,5 +1,14 @@
-# Next.js + NestJS + Postgres Boilerplate <!-- omit in toc -->
+# Next.js + Fastify + Postgres Boilerplate <!-- omit in toc -->
 
+> **🚨 MANDATORY DEVELOPER SETUP REQUIRED** 🚨  
+> **All developers MUST complete the [Developer Setup](#-mandatory-developer-setup) section before starting development.**
+
+- [🚨 MANDATORY Developer Setup](#-mandatory-developer-setup)
+  - [1. Install Pre-commit Hooks (REQUIRED)](#1-install-pre-commit-hooks-required)
+  - [2. VS Code Setup (RECOMMENDED)](#2-vs-code-setup-recommended)
+  - [3. Verify Setup](#3-verify-setup)
+  - [4. Available Quality Commands](#4-available-quality-commands)
+  - [5. What Happens Automatically](#5-what-happens-automatically)
 - [Overview](#overview)
 - [📋 Quick Start Guide](#-quick-start-guide)
   - [Prerequisites](#prerequisites)
@@ -22,12 +31,92 @@
   - [Environment Variables](#environment-variables)
     - [Web Application (Next.js)](#web-application-nextjs)
     - [API Application (NestJS)](#api-application-nestjs)
-    - [Database Configuration (When Added)](#database-configuration-when-added)
+    - [Database Configuration](#database-configuration)
   - [Utilities](#utilities)
   - [Build](#build-1)
   - [Develop](#develop)
   - [Remote Caching](#remote-caching)
 - [📚 Learn More](#-learn-more)
+
+## 🚨 MANDATORY Developer Setup
+
+**⚠️ ALL DEVELOPERS MUST COMPLETE THIS SETUP BEFORE CONTRIBUTING CODE ⚠️**
+
+This ensures code quality and prevents build failures. **PRs will be rejected if this setup is not completed.**
+
+### 1. Install Pre-commit Hooks (REQUIRED)
+
+```bash
+# Install Husky and lint-staged
+pnpm add -D husky lint-staged
+
+# Initialize Husky (creates .husky/ directory)
+npx husky init
+
+# Set up pre-commit hook
+echo "pnpm validate" > .husky/pre-commit
+chmod +x .husky/pre-commit
+```
+
+### 2. VS Code Setup (RECOMMENDED)
+
+If using VS Code, install these essential extensions:
+
+- **ESLint** (`ms-vscode.vscode-eslint`) - Shows linting errors in real-time
+- **Prettier** (`esbenp.prettier-vscode`) - Auto-formats code on save  
+- **TypeScript Importer** (`pmneo.tsimporter`) - Auto-imports TypeScript types
+
+**VS Code Workspace Settings** (automatically configured):
+```json
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "eslint.validate": ["typescript", "typescriptreact"],
+  "typescript.preferences.includePackageJsonAutoImports": "on"
+}
+```
+
+### 3. Verify Setup
+
+Run these commands to ensure everything works:
+
+```bash
+# Test linting and type checking
+pnpm validate
+
+# Test code formatting  
+pnpm format
+
+# Try to commit (should trigger pre-commit hooks)
+git add .
+git commit -m "test: verify pre-commit setup"
+```
+
+### 4. Available Quality Commands
+
+```bash
+# Check all code quality (runs before commit automatically)
+pnpm validate      # Runs lint + type check
+
+# Individual checks
+pnpm lint         # ESLint across all packages
+pnpm check-types  # TypeScript compilation check
+pnpm format       # Format all code with Prettier
+
+# Auto-fix what's possible
+pnpm lint --fix   # Fix ESLint issues automatically
+```
+
+### 5. What Happens Automatically
+
+- **Pre-commit**: Lint and type check run before every commit
+- **On Save**: Code auto-formats in VS Code  
+- **CI/CD**: Quality checks block deployment if they fail
+- **Development**: Format watcher runs during `pnpm dev`
+
+**🎯 If any command fails, fix the issues before committing!**
+
+---
 
 ## Overview
 

@@ -15,7 +15,8 @@
     "build": "tsc",
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",
-    "format:watch": "onchange \"**/*.{ts,tsx,js,jsx,json,md}\" -- prettier --write {{changed}}"
+    "format:watch": "onchange \"**/*.{ts,tsx,js,jsx,json,md}\" -- prettier --write {{changed}}",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

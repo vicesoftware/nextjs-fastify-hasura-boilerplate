@@ -24,7 +24,7 @@ export async function checkDbConnection() {
     console.error('Database connection failed:', error);
     return {
       status: 'down',
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown database error'
     };
   }
 }

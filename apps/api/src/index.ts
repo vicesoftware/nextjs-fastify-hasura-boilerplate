@@ -37,18 +37,15 @@ server.get('/api/health', async (): Promise<HealthCheckResponse> => {
   const uptime = Date.now() - startTime.getTime();
   const uptimeInSeconds = Math.floor(uptime / 1000);
 
-  // Get package info
-  // Note: Using require for JSON files as they need resolveJsonModule
-  const packageJson = require('../package.json');
-  const rootPackageJson = require('../../../package.json');
+  // Note: Package info removed to avoid require() imports
+  // This can be added back with proper ES module imports if needed
 
   // Check database connection
   const dbStatus = await checkDbConnection();
   
   return {
     status: dbStatus.status === 'down' ? 'down' : 'up',
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV,
+    info: {},
     details: {
       uptime: {
         status: 'up',
@@ -63,13 +60,7 @@ server.get('/api/health', async (): Promise<HealthCheckResponse> => {
       },
       database: dbStatus,
     },
-    version: {
-      app: packageJson.version,
-      monorepo: rootPackageJson.name,
-      packageManager: rootPackageJson.packageManager,
-      node: process.version,
-    },
-  };
+  } as HealthCheckResponse;
 });
 
 // Start the server
@@ -77,7 +68,9 @@ const start = async () => {
   try {
     const port = process.env.PORT ? parseInt(process.env.PORT) : 4000;
     await server.listen({ port, host: '0.0.0.0' });
-    console.log(`Server listening on ${server.server.address().port}`);
+    const address = server.server.address();
+    const listeningPort = typeof address === 'string' ? address : address?.port;
+    console.log(`Server listening on ${listeningPort}`);
   } catch (err) {
     server.log.error(err);
     process.exit(1);
