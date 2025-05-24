@@ -9,18 +9,23 @@
     "start": "node dist/index.js",
     "start:prod": "node dist/index.js",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@fastify/cors": "^11.0.1",
-    "@repo/api-types": "workspace:*",
-    "fastify": "^5.3.3",
-    "pg": "^8.11.3",
-    "drizzle-orm": "^0.30.5",
     "@fastify/postgres": "^5.2.0",
+    "@repo/api-types": "workspace:*",
+    "drizzle-orm": "^0.30.5",
+    "fastify": "^5.3.3",
+    "graphql": "^16.11.0",
+    "graphql-request": "^7.1.2",
+    "pg": "^8.11.3",
     "postgres": "^3.4.3"
   },
   "devDependencies": {

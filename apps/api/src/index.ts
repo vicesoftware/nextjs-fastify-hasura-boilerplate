@@ -1,7 +1,8 @@
 import fastify from 'fastify';
 import cors from '@fastify/cors';
 import { HealthCheckResponse } from '@repo/api-types';
-import { checkDbConnection } from './db';
+import { checkDbConnection, runMigrations } from './db';
+import { seedDatabase } from './db/seed';
 
 // Start time for uptime calculation
 const startTime = new Date();
@@ -66,6 +67,10 @@ server.get('/api/health', async (): Promise<HealthCheckResponse> => {
 // Start the server
 const start = async () => {
   try {
+    // Run migrations and seeding on startup
+    await runMigrations();
+    await seedDatabase();
+    
     const port = process.env.PORT ? parseInt(process.env.PORT) : 4000;
     await server.listen({ port, host: '0.0.0.0' });
     const address = server.server.address();

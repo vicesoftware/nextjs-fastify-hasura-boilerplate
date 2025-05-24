@@ -1,10 +1,27 @@
 import { Pool } from 'pg';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { migrate } from 'drizzle-orm/node-postgres/migrator';
+import * as schema from './schema';
 
 // Get connection string from environment variable
 const connectionString = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:25432/app';
 
 // Create a PostgreSQL connection pool
 export const pool = new Pool({ connectionString });
+
+// Create Drizzle database instance
+export const db = drizzle(pool, { schema });
+
+// Run migrations on startup
+export async function runMigrations() {
+  try {
+    await migrate(db, { migrationsFolder: './src/db/migrations' });
+    console.log('Database migrations completed successfully');
+  } catch (error) {
+    console.error('Migration failed:', error);
+    throw error;
+  }
+}
 
 // Export function to test the database connection
 export async function checkDbConnection() {
