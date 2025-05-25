@@ -1,8 +1,6 @@
 services:
   - type: web
     name: web
-    projectId: pegasus
-    environmentId: Prod
     runtime: node
     region: us-east
     plan: pro
@@ -20,7 +18,6 @@ services:
       cd ../../apps/web && pnpm build
     startCommand: cd apps/web && PORT=10000 pnpm start
     healthCheckPath: /api/health
-    port: 10000
     # Optionally add repo/branch/autodeploy here
     envVars:
       - key: NEXT_PUBLIC_API_URL
@@ -40,8 +37,6 @@ services:
 
   - type: web
     name: api
-    projectId: pegasus
-    environmentId: Prod
     runtime: node
     region: us-east
     plan: pro
@@ -60,7 +55,6 @@ services:
       cd ../../apps/api && pnpm build
     startCommand: cd apps/api && PORT=4000 pnpm start:prod
     healthCheckPath: /api/health
-    port: 4000
     # Optionally add repo/branch/autodeploy here
     envVars:
       - key: NODE_ENV
@@ -82,8 +76,6 @@ services:
 
 databases:
   - name: pegasus-prod
-    projectId: pegasus
-    environmentId: Prod
     plan: pro
     region: us-east
     ipAllowList: [] # Only allow internal connections
