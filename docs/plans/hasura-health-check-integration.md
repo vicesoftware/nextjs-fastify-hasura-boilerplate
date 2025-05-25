@@ -5,6 +5,9 @@
 - [Overview](#overview)
 - [Current Architecture](#current-architecture)
 - [Proposed Architecture (Option A: API Gateway Pattern)](#proposed-architecture-option-a-api-gateway-pattern)
+- [File Structure \& Implementation](#file-structure--implementation)
+  - [**Core Implementation Files**](#core-implementation-files)
+  - [**Data Flow by File**](#data-flow-by-file)
 - [Benefits of API Gateway Pattern](#benefits-of-api-gateway-pattern)
   - [Single Integration Point](#single-integration-point)
   - [Server-Side Orchestration](#server-side-orchestration)
@@ -64,52 +67,145 @@ This plan outlines the integration of Hasura GraphQL engine to enhance our exist
 
 ```mermaid
 graph LR
-    A[Web App] -->|HTTP /api/health| B[API Server]
-    B -->|SQL SELECT NOW| C[(PostgreSQL)]
-    B -->|Response| A
+    A[Web App<br/>apps/web/src/components/health-status.tsx] -->|HTTP /api/health| B[API Server<br/>apps/api/src/index.ts]
+    B -->|SQL SELECT NOW<br/>apps/api/src/db/index.ts| C[(PostgreSQL)]
+    B -->|Response<br/>packages/api-types/src/health.ts| A
 ```
 
 **Current Health Check Flow:**
 
-1. Web app calls `/api/health` endpoint
-2. API server checks database connection with `SELECT NOW()`
-3. Returns aggregated status with version info from package.json
+1. Web app (`apps/web/src/components/health-status.tsx`) calls `/api/health` endpoint
+2. API server (`apps/api/src/index.ts`) checks database connection with `SELECT NOW()` via `apps/api/src/db/index.ts`
+3. Returns aggregated status using types from `packages/api-types/src/health.ts`
 4. Web component displays status with 30-second polling
 
 ## Proposed Architecture (Option A: API Gateway Pattern)
 
 ```mermaid
 graph TD
-    A[Web App] -->|HTTP /api/health| B[API Server]
-    B -->|Direct SQL| C[(PostgreSQL)]
-    B -->|GraphQL Query| D[Hasura Engine]
+    A[Web App<br/>apps/web/src/components/health-status.tsx] -->|HTTP /api/health| B[API Server<br/>apps/api/src/index.ts]
+    B -->|Direct SQL<br/>apps/api/src/db/index.ts| C[(PostgreSQL<br/>Database Tables)]
+    B -->|GraphQL Query<br/>apps/api/src/lib/hasura-client.ts| D[Hasura Engine<br/>Dockerfile.hasura]
     D -->|Direct SQL| C
-    B -->|Unified Response| A
+    B -->|Unified Response<br/>packages/api-types/src/health.ts| A
+
+    subgraph "Database Schema"
+        C1[app_metadata<br/>apps/api/src/db/migrations/001_create_app_metadata.sql]
+        C2[health_snapshots<br/>apps/api/src/db/migrations/002_create_health_snapshots.sql]
+        C --> C1
+        C --> C2
+    end
 
     subgraph "Internal Services"
         B
         D
     end
 
-    subgraph "Data Layer"
-        C
+    subgraph "Shared Types"
+        E[packages/api-types/src/health.ts<br/>HealthCheckResponse, AppMetadata, DeploymentInfo]
     end
 ```
 
 **Enhanced Health Check Flow:**
 
-1. **Unified Gateway Flow**:
+1. **Frontend Layer**:
 
-   - Web app → API Server (single endpoint: `/api/health`)
-   - API Server handles both:
-     - Direct database connection tests
-     - GraphQL queries to Hasura for version/metadata
-   - API combines and returns unified response
+   - `apps/web/src/components/health-status.tsx` → API Server (single endpoint: `/api/health`)
 
-2. **Internal Data Sources**:
-   - API → Direct PostgreSQL (connection testing, basic queries)
-   - API → Hasura GraphQL (version metadata, historical data)
-   - API orchestrates and caches responses
+2. **API Gateway Layer** (`apps/api/src/index.ts`):
+
+   - Orchestrates multiple data sources:
+     - Direct database connection tests (`apps/api/src/db/index.ts`)
+     - GraphQL queries to Hasura (`apps/api/src/lib/hasura-client.ts`)
+   - Combines and returns unified response using types from `packages/api-types/src/health.ts`
+
+3. **Data Sources**:
+   - **Direct PostgreSQL**: Connection testing, basic queries via `apps/api/src/db/index.ts`
+   - **Hasura GraphQL**: Version metadata, historical data via `apps/api/src/lib/hasura-client.ts`
+   - **Database Tables**:
+     - `app_metadata` (created by `apps/api/src/db/migrations/001_create_app_metadata.sql`)
+     - `health_snapshots` (created by `apps/api/src/db/migrations/002_create_health_snapshots.sql`)
+
+## File Structure & Implementation
+
+### **Core Implementation Files**
+
+```
+📁 Project Root
+├── 📁 apps/
+│   ├── 📁 api/
+│   │   ├── 📄 package.json                    # Dependencies (graphql-request added)
+│   │   └── 📁 src/
+│   │       ├── 📄 index.ts                    # Main API server with enhanced /api/health endpoint
+│   │       ├── 📁 db/
+│   │       │   ├── 📄 index.ts                # Database connection + getEnhancedHealthStatus()
+│   │       │   ├── 📄 seed.ts                 # Initial app_metadata seeding
+│   │       │   └── 📁 migrations/
+│   │       │       ├── 📄 001_create_app_metadata.sql      # Version tracking table
+│   │       │       └── 📄 002_create_health_snapshots.sql  # Historical health data
+│   │       └── 📁 lib/
+│   │           └── 📄 hasura-client.ts        # GraphQL client + HasuraService class
+│   └── 📁 web/
+│       └── 📁 src/components/
+│           └── 📄 health-status.tsx           # Frontend health display component
+├── 📁 packages/
+│   └── 📁 api-types/src/
+│       └── 📄 health.ts                       # Shared TypeScript interfaces
+├── 📄 Dockerfile.hasura                       # Hasura container configuration
+├── 📄 render.yaml                             # Deployment configuration (Hasura service)
+└── 📄 turbo.json                              # Environment variables (HASURA_*)
+```
+
+### **Data Flow by File**
+
+1. **Request Initiation**: `apps/web/src/components/health-status.tsx`
+
+   ```typescript
+   fetch('/api/health') → API Gateway
+   ```
+
+2. **API Gateway Processing**: `apps/api/src/index.ts`
+
+   ```typescript
+   server.get("/api/health", async (): Promise<HealthCheckResponse> => {
+     const enhancedStatus = await getEnhancedHealthStatus(); // From db/index.ts
+     return response; // Using types from packages/api-types/src/health.ts
+   });
+   ```
+
+3. **Enhanced Health Logic**: `apps/api/src/db/index.ts`
+
+   ```typescript
+   export async function getEnhancedHealthStatus() {
+     const dbStatus = await checkDbConnection(); // Direct SQL
+     const hasuraAvailable = await hasuraService.testConnection(); // Via hasura-client.ts
+     const versions = await hasuraService.getAppMetadata(); // GraphQL query
+     // Returns combined status
+   }
+   ```
+
+4. **Hasura Integration**: `apps/api/src/lib/hasura-client.ts`
+
+   ```typescript
+   export class HasuraService {
+     async getAppMetadata(); // Query app_metadata table
+     async recordHealthSnapshot(); // Insert into health_snapshots table
+     async testConnection(); // Health check Hasura itself
+   }
+   ```
+
+5. **Type Safety**: `packages/api-types/src/health.ts`
+   ```typescript
+   export interface HealthCheckResponse {
+     /* Enhanced with versions, deployment */
+   }
+   export interface AppMetadata {
+     /* Version tracking data */
+   }
+   export interface DeploymentInfo {
+     /* Hasura availability, environment */
+   }
+   ```
 
 ## Benefits of API Gateway Pattern
 
