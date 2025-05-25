@@ -5,6 +5,12 @@ export async function seedDatabase() {
   try {
     console.log("Seeding database with initial data...");
 
+    // Check if database is available
+    if (!db) {
+      console.warn("Database not available - skipping seed operation");
+      return;
+    }
+
     // Insert initial app metadata
     await db
       .insert(appMetadata)
