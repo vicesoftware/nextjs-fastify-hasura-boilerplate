@@ -8,10 +8,17 @@ import {
   type HealthSnapshot,
 } from "../lib/hasura-client.js";
 
-// Get connection string from environment variable
-const connectionString =
-  process.env.DATABASE_URL ||
-  "postgres://postgres:postgres@localhost:25432/app";
+// Get connection string from environment variable - fail fast if not set
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error("DATABASE_URL environment variable is required but not set");
+}
+
+console.log(
+  "Database connection string:",
+  connectionString.replace(/:[^:@]*@/, ":***@")
+); // Log with masked password
 
 // Create a PostgreSQL connection pool
 export const pool = new Pool({ connectionString });
@@ -19,14 +26,28 @@ export const pool = new Pool({ connectionString });
 // Create Drizzle database instance
 export const db = drizzle(pool, { schema });
 
-// Run migrations on startup
+// Run migrations on startup with retry logic
 export async function runMigrations() {
-  try {
-    await migrate(db, { migrationsFolder: "./src/db/migrations" });
-    console.log("Database migrations completed successfully");
-  } catch (error) {
-    console.error("Migration failed:", error);
-    throw error;
+  const maxRetries = 5;
+  const retryDelay = 2000; // 2 seconds
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`Migration attempt ${attempt}/${maxRetries}`);
+      await migrate(db, { migrationsFolder: "./src/db/migrations" });
+      console.log("Database migrations completed successfully");
+      return;
+    } catch (error) {
+      console.error(`Migration attempt ${attempt} failed:`, error);
+
+      if (attempt === maxRetries) {
+        console.error("All migration attempts failed");
+        throw error;
+      }
+
+      console.log(`Retrying in ${retryDelay}ms...`);
+      await new Promise((resolve) => setTimeout(resolve, retryDelay));
+    }
   }
 }
 

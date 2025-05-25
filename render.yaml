@@ -40,7 +40,7 @@ services:
       - key: TURBO_TEAM
         value: "your-team-name"
       - key: TURBO_TOKEN
-        sync: false
+        value: "placeholder-token"  # TODO: Set real token for remote cache
       - key: PNPM_VERSION
         value: "9.0.0"
       - key: PORT
@@ -90,7 +90,7 @@ services:
       - key: TURBO_TEAM
         value: "your-team-name"
       - key: TURBO_TOKEN
-        sync: false
+        value: "placeholder-token"  # TODO: Set real token for remote cache
       - key: PNPM_VERSION
         value: "9.0.0"
       - key: PORT
@@ -124,7 +124,7 @@ services:
           property: url
           envVarKey: HASURA_URL
       - key: HASURA_ADMIN_SECRET
-        sync: false  # Set this manually in Render dashboard
+        value: "dev-admin-secret-123"  # TODO: Move to manual secret for production
 
   - type: web
     name: hasura
@@ -146,7 +146,7 @@ services:
       - key: HASURA_GRAPHQL_ENABLED_LOG_TYPES
         value: "startup, http-log, webhook-log, websocket-log, query-log"
       - key: HASURA_GRAPHQL_ADMIN_SECRET
-        sync: false  # Set this manually in Render dashboard
+        value: "dev-admin-secret-123"  # TODO: Move to manual secret for production
       - key: HASURA_GRAPHQL_CORS_DOMAIN
         value: "*"  # Configure based on your domains
       - key: HASURA_GRAPHQL_DISABLE_CORS

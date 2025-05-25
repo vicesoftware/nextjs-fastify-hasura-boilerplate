@@ -1,14 +1,25 @@
 import { GraphQLClient } from "graphql-request";
 
+// Validate required environment variables
+const hasuraUrl = process.env.HASURA_URL;
+const hasuraAdminSecret = process.env.HASURA_ADMIN_SECRET;
+
+if (!hasuraUrl) {
+  throw new Error("HASURA_URL environment variable is required but not set");
+}
+
+if (!hasuraAdminSecret) {
+  throw new Error(
+    "HASURA_ADMIN_SECRET environment variable is required but not set"
+  );
+}
+
 // Hasura GraphQL client configuration
-const hasuraClient = new GraphQLClient(
-  process.env.HASURA_URL || "http://hasura:8080/v1/graphql",
-  {
-    headers: {
-      "x-hasura-admin-secret": process.env.HASURA_ADMIN_SECRET || "",
-    },
-  }
-);
+const hasuraClient = new GraphQLClient(hasuraUrl, {
+  headers: {
+    "x-hasura-admin-secret": hasuraAdminSecret,
+  },
+});
 
 // GraphQL queries and mutations
 export const GET_APP_METADATA = `
