@@ -6,6 +6,6 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": "."
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "drizzle.config.ts"],
   "exclude": ["node_modules", "dist"]
 }

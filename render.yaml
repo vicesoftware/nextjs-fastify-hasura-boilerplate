@@ -28,6 +28,13 @@ services:
         value: "${api.url}/api"
       - key: NODE_ENV
         value: production
+      # Version information
+      - key: APP_VERSION
+        value: "${RENDER_GIT_TAG}"
+      - key: GIT_COMMIT
+        value: "${RENDER_GIT_COMMIT}"
+      - key: BUILD_TIME
+        value: "${RENDER_SERVICE_DEPLOY_TIME}"
       - key: TURBO_REMOTE_ONLY
         value: "true"
       - key: TURBO_TEAM
@@ -66,6 +73,13 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      # Version information
+      - key: APP_VERSION
+        value: "${RENDER_GIT_TAG}"
+      - key: GIT_COMMIT
+        value: "${RENDER_GIT_COMMIT}"
+      - key: BUILD_TIME
+        value: "${RENDER_SERVICE_DEPLOY_TIME}"
       - key: WEB_URL
         fromService:
           type: web
@@ -102,7 +116,41 @@ services:
           type: pserv
           name: app-postgres
           property: database
+      # Hasura connection variables
+      - key: HASURA_URL
+        fromService:
+          type: web
+          name: hasura
+          property: url
+          envVarKey: HASURA_URL
+      - key: HASURA_ADMIN_SECRET
+        sync: false  # Set this manually in Render dashboard
 
+  - type: web
+    name: hasura
+    env: docker
+    dockerfilePath: ./Dockerfile.hasura
+    region: ohio
+    plan: free
+    port: 8080
+    envVars:
+      - key: HASURA_GRAPHQL_DATABASE_URL
+        fromService:
+          type: pserv
+          name: app-postgres
+          property: connectionString
+      - key: HASURA_GRAPHQL_ENABLE_CONSOLE
+        value: "false"  # Disabled in production
+      - key: HASURA_GRAPHQL_DEV_MODE
+        value: "false"
+      - key: HASURA_GRAPHQL_ENABLED_LOG_TYPES
+        value: "startup, http-log, webhook-log, websocket-log, query-log"
+      - key: HASURA_GRAPHQL_ADMIN_SECRET
+        sync: false  # Set this manually in Render dashboard
+      - key: HASURA_GRAPHQL_CORS_DOMAIN
+        value: "*"  # Configure based on your domains
+      - key: HASURA_GRAPHQL_DISABLE_CORS
+        value: "false"
 
 # Uncomment below to add Redis
 # - type: redis
