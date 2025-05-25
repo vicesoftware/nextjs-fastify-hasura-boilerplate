@@ -33,7 +33,7 @@ services:
       - key: TURBO_TEAM
         value: "your-team-name"
       - key: TURBO_TOKEN
-        value: "placeholder-token"
+        sync: false
       - key: PNPM_VERSION
         value: "9.0.0"
       - key: PORT
@@ -76,7 +76,7 @@ services:
       - key: TURBO_TEAM
         value: "your-team-name"
       - key: TURBO_TOKEN
-        value: "placeholder-token"
+        sync: false
       - key: PNPM_VERSION
         value: "9.0.0"
       - key: PORT
@@ -103,13 +103,15 @@ services:
           name: app-postgres
           property: database
 
-  # PostgreSQL Database
-  - type: pserv
-    name: app-postgres
-    env: postgres
-    plan: free
-    region: ohio
-    disk:
-      name: postgres-data
-      mountPath: /var/lib/postgresql/data
-      sizeGB: 1
+
+# PostgreSQL Database
+- type: pserv
+  name: app-postgres
+  env: postgres
+  plan: free
+  region: ohio
+  ipAllowList: []  # Only allow internal connections
+  disk:
+    name: data
+    mountPath: /var/lib/postgresql/data
+    sizeGB: 10
