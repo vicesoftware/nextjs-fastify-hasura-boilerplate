@@ -1,7 +1,15 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
-  "globalEnv": ["NODE_ENV", "NEXT_PUBLIC_*", "DATABASE_URL", "WEB_URL", "PORT"],
+  "globalEnv": [
+    "NODE_ENV",
+    "NEXT_PUBLIC_*",
+    "DATABASE_URL",
+    "WEB_URL",
+    "PORT",
+    "HASURA_URL",
+    "HASURA_ADMIN_SECRET"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
