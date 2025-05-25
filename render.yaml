@@ -1,10 +1,11 @@
-# render.yaml
 services:
   - type: web
     name: web
+    project: pegasus
+    environment: Prod
     env: node
     region: ohio
-    plan: free
+    plan: pro
     rootDir: .
     buildFilter:
       paths:
@@ -14,18 +15,19 @@ services:
         - "pnpm*"
     buildCommand: |
       corepack enable
-      # Install dependencies
       pnpm install --no-frozen-lockfile
-      # Build API types first
       cd packages/api-types && pnpm build
-      # Build web app
       cd ../../apps/web && pnpm build
     startCommand: cd apps/web && PORT=10000 pnpm start
     healthCheckPath: /api/health
     port: 10000
+    # Optionally add repo/branch/autodeploy here
     envVars:
       - key: NEXT_PUBLIC_API_URL
-        value: "${api.url}/api"
+        fromService:
+          type: web
+          name: api
+          property: url
       - key: NODE_ENV
         value: production
       - key: TURBO_REMOTE_ONLY
@@ -41,9 +43,11 @@ services:
 
   - type: web
     name: api
+    project: pegasus
+    environment: Prod
     env: node
     region: ohio
-    plan: free
+    plan: pro
     rootDir: .
     buildFilter:
       paths:
@@ -54,15 +58,13 @@ services:
     buildCommand: |
       export NODE_ENV=production
       corepack enable
-      # Install dependencies
       pnpm install --no-frozen-lockfile
-      # Build API types first
       cd packages/api-types && pnpm build
-      # Build API app
       cd ../../apps/api && pnpm build
     startCommand: cd apps/api && PORT=4000 pnpm start:prod
     healthCheckPath: /api/health
     port: 4000
+    # Optionally add repo/branch/autodeploy here
     envVars:
       - key: NODE_ENV
         value: production
@@ -81,15 +83,15 @@ services:
         value: "9.0.0"
       - key: PORT
         value: "4000"
-      # Database connection variables
       - key: DATABASE_URL
         fromDatabase:
-          name: app-postgres
+          name: pegasus-prod
           property: connectionString
 
-# PostgreSQL Database
 databases:
-  - name: app-postgres
-    plan: free
+  - name: pegasus-prod
+    project: pegasus
+    environment: Prod
+    plan: pro
     region: ohio
     ipAllowList: [] # Only allow internal connections
