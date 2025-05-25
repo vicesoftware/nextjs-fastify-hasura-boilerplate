@@ -83,35 +83,13 @@ services:
         value: "4000"
       # Database connection variables
       - key: DATABASE_URL
-        fromService:
-          type: pserv
+        fromDatabase:
           name: app-postgres
           property: connectionString
-      - key: POSTGRES_USER
-        fromService:
-          type: pserv
-          name: app-postgres
-          property: user
-      - key: POSTGRES_PASSWORD
-        fromService:
-          type: pserv
-          name: app-postgres
-          property: password
-      - key: POSTGRES_DB
-        fromService:
-          type: pserv
-          name: app-postgres
-          property: database
-
 
 # PostgreSQL Database
-- type: pserv
-  name: app-postgres
-  env: postgres
-  plan: free
-  region: ohio
-  ipAllowList: []  # Only allow internal connections
-  disk:
-    name: data
-    mountPath: /var/lib/postgresql/data
-    sizeGB: 10
+databases:
+  - name: app-postgres
+    plan: free
+    region: ohio
+    ipAllowList: [] # Only allow internal connections
