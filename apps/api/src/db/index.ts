@@ -11,7 +11,25 @@ import {
 // Get connection string from environment variable - fail fast if not set
 const connectionString = process.env.DATABASE_URL;
 
+console.log("=== DATABASE CONNECTION DEBUG ===");
+console.log("DATABASE_URL:", connectionString ? "SET" : "NOT SET");
+console.log(
+  "All DATABASE/POSTGRES env vars:",
+  Object.keys(process.env).filter(
+    (key) =>
+      key.includes("DATABASE") || key.includes("POSTGRES") || key.includes("DB")
+  )
+);
+console.log(
+  "All RENDER env vars:",
+  Object.keys(process.env).filter((key) => key.includes("RENDER"))
+);
+
 if (!connectionString) {
+  console.error("DATABASE_URL environment variable is required but not set");
+  console.error(
+    "This suggests the PostgreSQL service is not ready or fromService config is incorrect"
+  );
   throw new Error("DATABASE_URL environment variable is required but not set");
 }
 

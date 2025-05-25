@@ -25,34 +25,15 @@ services:
     port: 10000
     envVars:
       - key: NEXT_PUBLIC_API_URL
-        fromService:
-          type: web
-          name: api
-          property: url
+        value: "${api.url}/api"
       - key: NODE_ENV
         value: production
-      # Version information
-      - key: APP_VERSION
-        fromService:
-          type: web
-          name: web
-          property: gitCommitSha
-      - key: GIT_COMMIT
-        fromService:
-          type: web
-          name: web
-          property: gitCommitSha
-      - key: BUILD_TIME
-        fromService:
-          type: web
-          name: web
-          property: createdAt
       - key: TURBO_REMOTE_ONLY
         value: "true"
       - key: TURBO_TEAM
         value: "your-team-name"
       - key: TURBO_TOKEN
-        value: "placeholder-token"  # TODO: Set real token for remote cache
+        value: "placeholder-token"
       - key: PNPM_VERSION
         value: "9.0.0"
       - key: PORT
@@ -85,22 +66,6 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      # Version information
-      - key: APP_VERSION
-        fromService:
-          type: web
-          name: api
-          property: gitCommitSha
-      - key: GIT_COMMIT
-        fromService:
-          type: web
-          name: api
-          property: gitCommitSha
-      - key: BUILD_TIME
-        fromService:
-          type: web
-          name: api
-          property: createdAt
       - key: WEB_URL
         fromService:
           type: web
@@ -111,7 +76,7 @@ services:
       - key: TURBO_TEAM
         value: "your-team-name"
       - key: TURBO_TOKEN
-        value: "placeholder-token"  # TODO: Set real token for remote cache
+        value: "placeholder-token"
       - key: PNPM_VERSION
         value: "9.0.0"
       - key: PORT
@@ -137,46 +102,6 @@ services:
           type: pserv
           name: app-postgres
           property: database
-      # Hasura connection variables
-      - key: HASURA_URL
-        fromService:
-          type: web
-          name: hasura
-          property: url
-      - key: HASURA_ADMIN_SECRET
-        value: "dev-admin-secret-123"  # TODO: Move to manual secret for production
-
-  - type: web
-    name: hasura
-    env: docker
-    dockerfilePath: ./Dockerfile.hasura
-    region: ohio
-    plan: free
-    port: 8080
-    envVars:
-      - key: HASURA_GRAPHQL_DATABASE_URL
-        fromService:
-          type: pserv
-          name: app-postgres
-          property: connectionString
-      - key: HASURA_GRAPHQL_ENABLE_CONSOLE
-        value: "false"  # Disabled in production
-      - key: HASURA_GRAPHQL_DEV_MODE
-        value: "false"
-      - key: HASURA_GRAPHQL_ENABLED_LOG_TYPES
-        value: "startup, http-log, webhook-log, websocket-log, query-log"
-      - key: HASURA_GRAPHQL_ADMIN_SECRET
-        value: "dev-admin-secret-123"  # TODO: Move to manual secret for production
-      - key: HASURA_GRAPHQL_CORS_DOMAIN
-        value: "*"  # Configure based on your domains
-      - key: HASURA_GRAPHQL_DISABLE_CORS
-        value: "false"
-
-# Uncomment below to add Redis
-# - type: redis
-#   name: app-redis
-#   ipAllowList: []  # Only allow internal connections
-#   plan: free
 
 # PostgreSQL Database
 - type: pserv
@@ -188,4 +113,4 @@ services:
   disk:
     name: data
     mountPath: /var/lib/postgresql/data
-    sizeGB: 10
+    sizeGB: 10 
