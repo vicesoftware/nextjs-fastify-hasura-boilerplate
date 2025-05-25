@@ -13,13 +13,13 @@ services:
         - "turbo.json"
         - "pnpm*"
     buildCommand: |
-        corepack enable
-        # Install dependencies
-        pnpm install --no-frozen-lockfile
-        # Build API types first
-        cd packages/api-types && pnpm build
-        # Build web app
-        cd ../../apps/web && pnpm build
+      corepack enable
+      # Install dependencies
+      pnpm install --no-frozen-lockfile
+      # Build API types first
+      cd packages/api-types && pnpm build
+      # Build web app
+      cd ../../apps/web && pnpm build
     startCommand: cd apps/web && PORT=10000 pnpm start
     healthCheckPath: /api/health
     port: 10000
@@ -52,14 +52,14 @@ services:
         - "turbo.json"
         - "pnpm*"
     buildCommand: |
-        export NODE_ENV=production
-        corepack enable
-        # Install dependencies
-        pnpm install --no-frozen-lockfile
-        # Build API types first
-        cd packages/api-types && pnpm build
-        # Build API app
-        cd ../../apps/api && pnpm build
+      export NODE_ENV=production
+      corepack enable
+      # Install dependencies
+      pnpm install --no-frozen-lockfile
+      # Build API types first
+      cd packages/api-types && pnpm build
+      # Build API app
+      cd ../../apps/api && pnpm build
     startCommand: cd apps/api && PORT=4000 pnpm start:prod
     healthCheckPath: /api/health
     port: 4000
@@ -103,14 +103,13 @@ services:
           name: app-postgres
           property: database
 
-# PostgreSQL Database
-- type: pserv
-  name: app-postgres
-  env: postgres
-  plan: free
-  region: ohio
-  ipAllowList: []  # Only allow internal connections
-  disk:
-    name: data
-    mountPath: /var/lib/postgresql/data
-    sizeGB: 10 
+  # PostgreSQL Database
+  - type: pserv
+    name: app-postgres
+    env: postgres
+    plan: free
+    region: ohio
+    disk:
+      name: postgres-data
+      mountPath: /var/lib/postgresql/data
+      sizeGB: 1
