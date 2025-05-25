@@ -1,10 +1,10 @@
 services:
   - type: web
     name: web
-    project: pegasus
-    environment: Prod
-    env: node
-    region: ohio
+    projectId: pegasus
+    environmentId: Prod
+    runtime: node
+    region: us-east
     plan: pro
     rootDir: .
     buildFilter:
@@ -24,7 +24,10 @@ services:
     # Optionally add repo/branch/autodeploy here
     envVars:
       - key: NEXT_PUBLIC_API_URL
-        value: https://api-82a7.onrender.com/api
+        fromService:
+          type: web
+          name: api
+          property: url
       - key: NODE_ENV
         value: production
       - key: TURBO_REMOTE_ONLY
@@ -40,10 +43,10 @@ services:
 
   - type: web
     name: api
-    project: pegasus
-    environment: Prod
-    env: node
-    region: ohio
+    projectId: pegasus
+    environmentId: Prod
+    runtime: node
+    region: us-east
     plan: pro
     rootDir: .
     buildFilter:
@@ -81,12 +84,14 @@ services:
       - key: PORT
         value: "4000"
       - key: DATABASE_URL
-        value: postgresql://pegasus_v8q7_user:AVfv6bTVCiQ1Cjj5PieSgEB7kUwwc173@dpg-d0pq558dl3ps73b1oshg-a/pegasus_v8q7
+        fromDatabase:
+          name: pegasus-prod
+          property: connectionString
 
 databases:
   - name: pegasus-prod
-    project: pegasus
-    environment: Prod
+    projectId: pegasus
+    environmentId: Prod
     plan: pro
-    region: ohio
+    region: us-east
     ipAllowList: [] # Only allow internal connections
