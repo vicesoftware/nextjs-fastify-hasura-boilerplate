@@ -25,16 +25,28 @@ services:
     port: 10000
     envVars:
       - key: NEXT_PUBLIC_API_URL
-        value: "${api.url}/api"
+        fromService:
+          type: web
+          name: api
+          property: url
       - key: NODE_ENV
         value: production
       # Version information
       - key: APP_VERSION
-        value: "${RENDER_GIT_TAG}"
+        fromService:
+          type: web
+          name: web
+          property: gitCommitSha
       - key: GIT_COMMIT
-        value: "${RENDER_GIT_COMMIT}"
+        fromService:
+          type: web
+          name: web
+          property: gitCommitSha
       - key: BUILD_TIME
-        value: "${RENDER_SERVICE_DEPLOY_TIME}"
+        fromService:
+          type: web
+          name: web
+          property: createdAt
       - key: TURBO_REMOTE_ONLY
         value: "true"
       - key: TURBO_TEAM
@@ -75,11 +87,20 @@ services:
         value: production
       # Version information
       - key: APP_VERSION
-        value: "${RENDER_GIT_TAG}"
+        fromService:
+          type: web
+          name: api
+          property: gitCommitSha
       - key: GIT_COMMIT
-        value: "${RENDER_GIT_COMMIT}"
+        fromService:
+          type: web
+          name: api
+          property: gitCommitSha
       - key: BUILD_TIME
-        value: "${RENDER_SERVICE_DEPLOY_TIME}"
+        fromService:
+          type: web
+          name: api
+          property: createdAt
       - key: WEB_URL
         fromService:
           type: web
@@ -122,7 +143,6 @@ services:
           type: web
           name: hasura
           property: url
-          envVarKey: HASURA_URL
       - key: HASURA_ADMIN_SECRET
         value: "dev-admin-secret-123"  # TODO: Move to manual secret for production
 
