@@ -4,22 +4,26 @@ import { GraphQLClient } from "graphql-request";
 const hasuraUrl = process.env.HASURA_URL;
 const hasuraAdminSecret = process.env.HASURA_ADMIN_SECRET;
 
+// Make Hasura optional during startup to handle service dependency issues
+let hasuraClient: GraphQLClient | null = null;
+
 if (!hasuraUrl) {
-  throw new Error("HASURA_URL environment variable is required but not set");
-}
-
-if (!hasuraAdminSecret) {
-  throw new Error(
-    "HASURA_ADMIN_SECRET environment variable is required but not set"
+  console.warn(
+    "HASURA_URL environment variable is not set - Hasura features will be disabled"
   );
+} else if (!hasuraAdminSecret) {
+  console.warn(
+    "HASURA_ADMIN_SECRET environment variable is not set - Hasura features will be disabled"
+  );
+} else {
+  // Hasura GraphQL client configuration
+  hasuraClient = new GraphQLClient(hasuraUrl, {
+    headers: {
+      "x-hasura-admin-secret": hasuraAdminSecret,
+    },
+  });
+  console.log("Hasura client initialized successfully");
 }
-
-// Hasura GraphQL client configuration
-const hasuraClient = new GraphQLClient(hasuraUrl, {
-  headers: {
-    "x-hasura-admin-secret": hasuraAdminSecret,
-  },
-});
 
 // GraphQL queries and mutations
 export const GET_APP_METADATA = `
@@ -84,11 +88,12 @@ export interface HealthSnapshot {
 
 // Hasura client functions
 export class HasuraService {
-  private client: GraphQLClient;
-  private available: boolean = true;
+  private client: GraphQLClient | null;
+  private available: boolean = false;
 
   constructor() {
     this.client = hasuraClient;
+    this.available = hasuraClient !== null;
   }
 
   /**
@@ -97,6 +102,11 @@ export class HasuraService {
   async getAppMetadata(
     environment: string = "production"
   ): Promise<AppMetadata[]> {
+    if (!this.client) {
+      console.warn("Hasura client not available - returning empty metadata");
+      return [];
+    }
+
     try {
       const response = await this.client.request<{
         app_metadata: AppMetadata[];
@@ -114,6 +124,13 @@ export class HasuraService {
    * Record a health check snapshot for historical analysis
    */
   async recordHealthSnapshot(snapshot: HealthSnapshot): Promise<boolean> {
+    if (!this.client) {
+      console.warn(
+        "Hasura client not available - skipping health snapshot recording"
+      );
+      return false;
+    }
+
     try {
       await this.client.request(RECORD_HEALTH_SNAPSHOT, { snapshot });
       return true;
@@ -133,6 +150,11 @@ export class HasuraService {
     gitCommit?: string,
     metadata?: Record<string, unknown>
   ): Promise<boolean> {
+    if (!this.client) {
+      console.warn("Hasura client not available - skipping metadata update");
+      return false;
+    }
+
     try {
       await this.client.request(UPDATE_APP_METADATA, {
         component,
@@ -159,6 +181,10 @@ export class HasuraService {
    * Test Hasura connection with a simple query
    */
   async testConnection(): Promise<boolean> {
+    if (!this.client) {
+      return false;
+    }
+
     try {
       // Simple introspection query to test connection
       await this.client.request(`query { __schema { queryType { name } } }`);
