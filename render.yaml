@@ -24,10 +24,7 @@ services:
     # Optionally add repo/branch/autodeploy here
     envVars:
       - key: NEXT_PUBLIC_API_URL
-        fromService:
-          type: web
-          name: api
-          property: url
+        value: https://api-82a7.onrender.com/api
       - key: NODE_ENV
         value: production
       - key: TURBO_REMOTE_ONLY
@@ -84,9 +81,7 @@ services:
       - key: PORT
         value: "4000"
       - key: DATABASE_URL
-        fromDatabase:
-          name: pegasus-prod
-          property: connectionString
+        value: postgresql://pegasus_v8q7_user:AVfv6bTVCiQ1Cjj5PieSgEB7kUwwc173@dpg-d0pq558dl3ps73b1oshg-a/pegasus_v8q7
 
 databases:
   - name: pegasus-prod
