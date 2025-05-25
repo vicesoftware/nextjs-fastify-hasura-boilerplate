@@ -67,7 +67,7 @@ services:
         cd packages/api-types && pnpm build
         # Build API app
         cd ../../apps/api && pnpm build
-    startCommand: cd apps/api && PORT=4000 pnpm start
+    startCommand: cd apps/api && PORT=4000 pnpm start:prod
     healthCheckPath: /api/health
     port: 4000
     envVars:
