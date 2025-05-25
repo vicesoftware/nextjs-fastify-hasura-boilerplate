@@ -28,6 +28,13 @@ services:
         value: "${api.url}/api"
       - key: NODE_ENV
         value: production
+      # Version information
+      - key: APP_VERSION
+        value: "${RENDER_GIT_TAG}"
+      - key: GIT_COMMIT
+        value: "${RENDER_GIT_COMMIT}"
+      - key: BUILD_TIME
+        value: "${RENDER_SERVICE_DEPLOY_TIME}"
       - key: TURBO_REMOTE_ONLY
         value: "true"
       - key: TURBO_TEAM
@@ -66,6 +73,13 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      # Version information
+      - key: APP_VERSION
+        value: "${RENDER_GIT_TAG}"
+      - key: GIT_COMMIT
+        value: "${RENDER_GIT_COMMIT}"
+      - key: BUILD_TIME
+        value: "${RENDER_SERVICE_DEPLOY_TIME}"
       - key: WEB_URL
         fromService:
           type: web

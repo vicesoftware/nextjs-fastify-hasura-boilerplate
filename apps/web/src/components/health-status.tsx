@@ -7,8 +7,27 @@ type HealthStatusProps = {
   apiUrl: string;
 };
 
+// Type for component version information
+type ComponentVersion = {
+  component: string;
+  version: string;
+  deployed_at: string;
+  git_commit?: string;
+};
+
+// Extended health response that includes web app specific fields
+type ExtendedHealthResponse = HealthCheckResponse & {
+  version?: {
+    app: string;
+    monorepo: string;
+    packageManager: string;
+    node: string;
+  };
+  environment?: string;
+};
+
 export default function HealthStatus({ apiUrl }: HealthStatusProps) {
-  const [healthData, setHealthData] = useState<HealthCheckResponse | null>(
+  const [healthData, setHealthData] = useState<ExtendedHealthResponse | null>(
     null,
   );
   const [loading, setLoading] = useState<boolean>(true);
@@ -108,6 +127,14 @@ export default function HealthStatus({ apiUrl }: HealthStatusProps) {
     }
   };
 
+  const formatVersion = (version: ComponentVersion): string => {
+    const parts = [version.version];
+    if (version.git_commit && version.git_commit !== "initial") {
+      parts.push(`(${version.git_commit.substring(0, 7)})`);
+    }
+    return parts.join(" ");
+  };
+
   return (
     <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 w-full max-w-md shadow-sm border border-gray-200 dark:border-gray-700 font-sans">
       <div className="flex items-center gap-2 mb-4">
@@ -118,6 +145,92 @@ export default function HealthStatus({ apiUrl }: HealthStatusProps) {
           API Health: {healthData.status.toUpperCase()}
         </h3>
       </div>
+
+      {/* Version Information Section */}
+      {((healthData.info?.versions && healthData.info.versions.length > 0) ||
+        healthData.version) && (
+        <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md border border-blue-200 dark:border-blue-800/30">
+          <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-300 mb-2">
+            📦 Component Versions
+          </h4>
+
+          {/* Hasura-based version data */}
+          {healthData.info?.versions && healthData.info.versions.length > 0 && (
+            <div className="space-y-2 mb-3">
+              <div className="text-xs font-medium text-blue-700 dark:text-blue-400 mb-1">
+                Backend Components:
+              </div>
+              {healthData.info.versions.map(
+                (version: ComponentVersion, index: number) => (
+                  <div
+                    key={index}
+                    className="flex justify-between items-center text-xs"
+                  >
+                    <span className="font-medium text-blue-700 dark:text-blue-400 capitalize">
+                      {version.component}:
+                    </span>
+                    <span className="text-blue-600 dark:text-blue-300 font-mono">
+                      {formatVersion(version)}
+                    </span>
+                  </div>
+                ),
+              )}
+            </div>
+          )}
+
+          {/* Web app version data */}
+          {healthData.version && (
+            <div className="space-y-2">
+              {healthData.info?.versions &&
+                healthData.info.versions.length > 0 && (
+                  <div className="text-xs font-medium text-blue-700 dark:text-blue-400 mb-1 pt-2 border-t border-blue-200 dark:border-blue-800/50">
+                    Frontend Components:
+                  </div>
+                )}
+              <div className="flex justify-between items-center text-xs">
+                <span className="font-medium text-blue-700 dark:text-blue-400">
+                  Web App:
+                </span>
+                <span className="text-blue-600 dark:text-blue-300 font-mono">
+                  {healthData.version.app}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-xs">
+                <span className="font-medium text-blue-700 dark:text-blue-400">
+                  Node.js:
+                </span>
+                <span className="text-blue-600 dark:text-blue-300 font-mono">
+                  {healthData.version.node}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-xs">
+                <span className="font-medium text-blue-700 dark:text-blue-400">
+                  Package Manager:
+                </span>
+                <span className="text-blue-600 dark:text-blue-300 font-mono">
+                  {healthData.version.packageManager}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Environment information */}
+          {(healthData.info?.deployment?.environment ||
+            healthData.environment) && (
+            <div className="mt-2 pt-2 border-t border-blue-200 dark:border-blue-800/50">
+              <div className="flex justify-between items-center text-xs">
+                <span className="font-medium text-blue-700 dark:text-blue-400">
+                  Environment:
+                </span>
+                <span className="px-2 py-1 bg-blue-100 dark:bg-blue-800/50 text-blue-800 dark:text-blue-200 rounded font-mono">
+                  {healthData.info?.deployment?.environment ||
+                    healthData.environment}
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {healthData.details?.uptime && (
@@ -160,35 +273,95 @@ export default function HealthStatus({ apiUrl }: HealthStatusProps) {
           </div>
         )}
 
-        {healthData.details?.api?.details?.database && (
+        {healthData.details?.database && (
           <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-md">
             <h4 className="text-sm font-semibold text-foreground/80 m-0 mb-2">
               Database
             </h4>
             <p
-              className={`text-sm font-semibold ${getStatusColorClass(healthData.details.api.details.database.status)} bg-opacity-10 dark:bg-opacity-20 inline-block px-2 py-1 rounded mb-2`}
+              className={`text-sm font-semibold ${getStatusColorClass(healthData.details.database.status)} bg-opacity-10 dark:bg-opacity-20 inline-block px-2 py-1 rounded mb-2`}
             >
-              {healthData.details.api.details.database.status.toUpperCase()}
+              {healthData.details.database.status.toUpperCase()}
             </p>
-            {healthData.details.api.details.database.timestamp && (
+            {healthData.details.database.timestamp && (
               <p className="text-xs opacity-70 m-0">
                 Last checked:{" "}
-                {formatDate(healthData.details.api.details.database.timestamp)}
+                {formatDate(healthData.details.database.timestamp)}
               </p>
             )}
-            {healthData.details.api.details.database.error && (
+            {healthData.details.database.error && (
               <p className="text-xs text-red-500 dark:text-red-400 mt-1 m-0">
-                Error: {healthData.details.api.details.database.error}
+                Error: {healthData.details.database.error}
               </p>
             )}
           </div>
         )}
+
+        {healthData.details?.hasura && (
+          <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-md">
+            <h4 className="text-sm font-semibold text-foreground/80 m-0 mb-2">
+              Hasura GraphQL
+            </h4>
+            <p
+              className={`text-sm font-semibold ${getStatusColorClass(healthData.details.hasura.status)} bg-opacity-10 dark:bg-opacity-20 inline-block px-2 py-1 rounded mb-2`}
+            >
+              {healthData.details.hasura.status.toUpperCase()}
+            </p>
+            {healthData.details.hasura.response_time && (
+              <p className="text-xs opacity-70 m-0">
+                Response time: {healthData.details.hasura.response_time}ms
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Show legacy database status if using old response format */}
+        {healthData.details?.api?.details?.database &&
+          !healthData.details?.database && (
+            <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-md">
+              <h4 className="text-sm font-semibold text-foreground/80 m-0 mb-2">
+                Database
+              </h4>
+              <p
+                className={`text-sm font-semibold ${getStatusColorClass(healthData.details.api.details.database.status)} bg-opacity-10 dark:bg-opacity-20 inline-block px-2 py-1 rounded mb-2`}
+              >
+                {healthData.details.api.details.database.status.toUpperCase()}
+              </p>
+              {healthData.details.api.details.database.timestamp && (
+                <p className="text-xs opacity-70 m-0">
+                  Last checked:{" "}
+                  {formatDate(
+                    healthData.details.api.details.database.timestamp,
+                  )}
+                </p>
+              )}
+              {healthData.details.api.details.database.error && (
+                <p className="text-xs text-red-500 dark:text-red-400 mt-1 m-0">
+                  Error: {healthData.details.api.details.database.error}
+                </p>
+              )}
+            </div>
+          )}
       </div>
 
       <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-600">
-        <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-          Health aggregated via web app
-        </p>
+        <div className="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400">
+          <span>Health aggregated via web app</span>
+          {healthData.info?.deployment?.hasura_available !== undefined && (
+            <span
+              className={`px-2 py-1 rounded text-xs font-medium ${
+                healthData.info.deployment.hasura_available
+                  ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300"
+                  : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300"
+              }`}
+            >
+              Hasura:{" "}
+              {healthData.info.deployment.hasura_available
+                ? "Available"
+                : "Unavailable"}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );

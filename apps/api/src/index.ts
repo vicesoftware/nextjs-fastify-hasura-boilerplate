@@ -7,6 +7,7 @@ import {
   getEnhancedHealthStatus,
 } from "./db/index.js";
 import { seedDatabase } from "./db/seed.js";
+import { versionSyncService } from "./services/version-sync.js";
 
 // Start time for uptime calculation
 const startTime = new Date();
@@ -111,6 +112,11 @@ const start = async () => {
     // Run migrations and seeding on startup
     await runMigrations();
     await seedDatabase();
+
+    // Sync version information to database (non-blocking)
+    versionSyncService.syncVersionOnStartup().catch((error) => {
+      console.warn("Version sync failed during startup:", error);
+    });
 
     const port = process.env.PORT ? parseInt(process.env.PORT) : 4000;
     await server.listen({ port, host: "0.0.0.0" });
