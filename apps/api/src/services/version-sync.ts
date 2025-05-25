@@ -94,8 +94,8 @@ export class VersionSyncService {
         stdio: ["ignore", "pipe", "ignore"],
       }).trim();
       return gitTag;
-    } catch (error) {
-      // No git tags available
+    } catch {
+      // No git tags available or git not accessible
       return null;
     }
   }
@@ -117,7 +117,7 @@ export class VersionSyncService {
         stdio: ["ignore", "pipe", "ignore"],
       }).trim();
       return gitCommit;
-    } catch (error) {
+    } catch {
       // Git not available or not in a git repo
       return "unknown";
     }

@@ -116,6 +116,15 @@ services:
           type: pserv
           name: app-postgres
           property: database
+      # Hasura connection variables
+      - key: HASURA_URL
+        fromService:
+          type: web
+          name: hasura
+          property: url
+          envVarKey: HASURA_URL
+      - key: HASURA_ADMIN_SECRET
+        sync: false  # Set this manually in Render dashboard
 
   - type: web
     name: hasura

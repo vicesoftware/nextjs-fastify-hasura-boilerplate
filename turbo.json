@@ -8,7 +8,10 @@
     "WEB_URL",
     "PORT",
     "HASURA_URL",
-    "HASURA_ADMIN_SECRET"
+    "HASURA_ADMIN_SECRET",
+    "APP_VERSION",
+    "GIT_COMMIT",
+    "BUILD_TIME"
   ],
   "tasks": {
     "build": {
