@@ -8,7 +8,7 @@ import {
   type HealthSnapshot,
 } from "../lib/hasura-client.js";
 
-// Get connection string from environment variable - fail fast if not set
+// Get connection string from environment variable - make resilient for service startup
 const connectionString = process.env.DATABASE_URL;
 
 console.log("=== DATABASE CONNECTION DEBUG ===");
@@ -26,26 +26,32 @@ console.log(
 );
 
 if (!connectionString) {
-  console.error("DATABASE_URL environment variable is required but not set");
-  console.error(
-    "This suggests the PostgreSQL service is not ready or fromService config is incorrect"
+  console.warn(
+    "DATABASE_URL environment variable is not set - database features will be disabled until service is ready"
   );
-  throw new Error("DATABASE_URL environment variable is required but not set");
+  console.warn(
+    "This is normal during startup while waiting for PostgreSQL service to become available"
+  );
+} else {
+  console.log(
+    "Database connection string:",
+    connectionString.replace(/:[^:@]*@/, ":***@")
+  ); // Log with masked password
 }
 
-console.log(
-  "Database connection string:",
-  connectionString.replace(/:[^:@]*@/, ":***@")
-); // Log with masked password
+// Create a PostgreSQL connection pool (will be null if no connection string)
+export const pool = connectionString ? new Pool({ connectionString }) : null;
 
-// Create a PostgreSQL connection pool
-export const pool = new Pool({ connectionString });
-
-// Create Drizzle database instance
-export const db = drizzle(pool, { schema });
+// Create Drizzle database instance (will be null if no pool)
+export const db = pool ? drizzle(pool, { schema }) : null;
 
 // Run migrations on startup with retry logic
 export async function runMigrations() {
+  if (!pool || !db) {
+    console.warn("Database not available - skipping migrations");
+    return;
+  }
+
   const maxRetries = 5;
   const retryDelay = 2000; // 2 seconds
 
@@ -71,6 +77,13 @@ export async function runMigrations() {
 
 // Export function to test the database connection
 export async function checkDbConnection() {
+  if (!pool) {
+    return {
+      status: "down",
+      error: "Database pool not available - DATABASE_URL not set",
+    };
+  }
+
   try {
     const client = await pool.connect();
     try {
