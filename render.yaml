@@ -14,9 +14,7 @@ services:
     buildCommand: |
       corepack enable
       pnpm install --no-frozen-lockfile
-      cd packages/shared-types && pnpm build
-      cd ../api-types && pnpm build
-      cd ../../apps/web && pnpm build
+      pnpm build --filter=web
     startCommand: cd apps/web && PORT=10000 pnpm start
     healthCheckPath: /api/health
     # Optionally add repo/branch/autodeploy here
@@ -52,9 +50,7 @@ services:
       export NODE_ENV=production
       corepack enable
       pnpm install --no-frozen-lockfile
-      cd packages/shared-types && pnpm build
-      cd ../api-types && pnpm build
-      cd ../../apps/api && pnpm build
+      pnpm build --filter=api
     startCommand: cd apps/api && PORT=4000 pnpm start:prod
     healthCheckPath: /api/health
     # Optionally add repo/branch/autodeploy here
