@@ -138,43 +138,68 @@ export default function ActivityPage() {
 
         {/* API Information */}
         <div className="mt-8 bg-gray-900 rounded-lg p-6 text-white">
-          <h2 className="text-lg font-semibold mb-4">API Endpoints</h2>
+          <h2 className="text-lg font-semibold mb-4">
+            🏗️ Microservices API Endpoints
+          </h2>
           <div className="space-y-3 font-mono text-sm">
             <div className="flex items-center space-x-3">
               <span className="bg-green-600 px-2 py-1 rounded text-xs">
                 GET
               </span>
-              <code>/api/activities</code>
+              <code>/api/activity/recent</code>
               <span className="text-gray-300">
-                - Recent activities using Hasura auto-generated query
+                - Recent activities (new microservices endpoint)
               </span>
             </div>
             <div className="flex items-center space-x-3">
               <span className="bg-blue-600 px-2 py-1 rounded text-xs">
                 POST
               </span>
-              <code>/api/activities/bulk</code>
+              <code>/api/activity/log</code>
               <span className="text-gray-300">
-                - Bulk activity logging via Hasura mutations
+                - Log single activity (new microservices endpoint)
+              </span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <span className="bg-blue-600 px-2 py-1 rounded text-xs">
+                POST
+              </span>
+              <code>/api/activity/bulk</code>
+              <span className="text-gray-300">
+                - Bulk activity logging (new microservices endpoint)
+              </span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <span className="bg-orange-600 px-2 py-1 rounded text-xs">
+                GET
+              </span>
+              <code>/api/activity/stats</code>
+              <span className="text-gray-300">
+                - Activity statistics (new microservices endpoint)
               </span>
             </div>
             <div className="flex items-center space-x-3">
               <span className="bg-purple-600 px-2 py-1 rounded text-xs">
-                POST
-              </span>
-              <code>/api/hasura/sync</code>
-              <span className="text-gray-300">
-                - Auto-track new database tables
-              </span>
-            </div>
-            <div className="flex items-center space-x-3">
-              <span className="bg-yellow-600 px-2 py-1 rounded text-xs">
                 GET
               </span>
-              <code>/api/hasura/status</code>
+              <code>/api/activity/health</code>
               <span className="text-gray-300">
-                - Check Hasura connection and tracked tables
+                - Feature health check (new microservices endpoint)
               </span>
+            </div>
+            <div className="border-t border-gray-700 pt-3 mt-4">
+              <p className="text-gray-400 text-xs mb-2">
+                Legacy endpoints (backward compatible):
+              </p>
+              <div className="flex items-center space-x-3">
+                <span className="bg-gray-600 px-2 py-1 rounded text-xs">
+                  GET
+                </span>
+                <code>/api/activities</code>
+                <span className="text-gray-300">
+                  - Backward compatibility for old clients
+                </span>
+              </div>
             </div>
           </div>
         </div>

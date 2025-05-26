@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 interface ActivityLogEntry {
   id: string;
@@ -21,10 +21,10 @@ export function ActivityFeed({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchActivities = async () => {
+  const fetchActivities = useCallback(async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/activities`,
+        `${process.env.NEXT_PUBLIC_API_URL}/activity/recent?limit=${limit}`,
       );
       const data = await response.json();
 
@@ -40,7 +40,7 @@ export function ActivityFeed({
     } finally {
       setLoading(false);
     }
-  };
+  }, [limit]);
 
   useEffect(() => {
     fetchActivities();
@@ -48,7 +48,7 @@ export function ActivityFeed({
     // Set up auto-refresh
     const interval = setInterval(fetchActivities, refreshInterval);
     return () => clearInterval(interval);
-  }, [refreshInterval]);
+  }, [refreshInterval, fetchActivities]);
 
   const formatTimestamp = (timestamp: string) => {
     return new Date(timestamp).toLocaleString();

@@ -36,7 +36,7 @@ export interface AppMetadata {
   deployed_at: string;
   git_commit?: string;
   environment?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface DeploymentInfo {

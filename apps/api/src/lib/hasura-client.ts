@@ -139,12 +139,6 @@ export interface HealthSnapshot {
   errors?: Record<string, unknown>;
 }
 
-export interface ActivityLogEntry {
-  id: string;
-  timestamp: string;
-  action: string;
-}
-
 // Hasura client functions
 export class HasuraService {
   private client: GraphQLClient | null;
@@ -257,89 +251,6 @@ export class HasuraService {
   }
 
   /**
-   * Log a single activity using Hasura's auto-generated mutation
-   * Demonstrates Hasura's CRUD capabilities
-   */
-  async logActivity(action: string): Promise<boolean> {
-    if (!this.client) {
-      console.warn("Hasura client not available - skipping activity logging");
-      return false;
-    }
-
-    try {
-      await this.client.request(LOG_ACTIVITY, { action });
-      return true;
-    } catch (error) {
-      console.error("Failed to log activity:", error);
-      return false;
-    }
-  }
-
-  /**
-   * Log multiple activities in bulk using Hasura's auto-generated bulk mutation
-   * Demonstrates Hasura's bulk operations
-   */
-  async logActivitiesBulk(actions: string[]): Promise<boolean> {
-    if (!this.client) {
-      console.warn(
-        "Hasura client not available - skipping bulk activity logging"
-      );
-      return false;
-    }
-
-    try {
-      const activities = actions.map((action) => ({ action }));
-      await this.client.request(LOG_ACTIVITIES_BULK, { activities });
-      return true;
-    } catch (error) {
-      console.error("Failed to log activities in bulk:", error);
-      return false;
-    }
-  }
-
-  /**
-   * Get recent activities using Hasura's auto-generated query
-   * Demonstrates Hasura's query capabilities
-   */
-  async getRecentActivities(limit: number = 20): Promise<ActivityLogEntry[]> {
-    if (!this.client) {
-      console.warn("Hasura client not available - returning empty activities");
-      return [];
-    }
-
-    try {
-      const response = await this.client.request<{
-        activity_log: ActivityLogEntry[];
-      }>(GET_RECENT_ACTIVITIES, { limit });
-      return response.activity_log;
-    } catch (error) {
-      console.error("Failed to fetch recent activities:", error);
-      return [];
-    }
-  }
-
-  /**
-   * Get activities by action type using Hasura's auto-generated filtering
-   * Demonstrates Hasura's complex query capabilities
-   */
-  async getActivitiesByAction(actions: string[]): Promise<ActivityLogEntry[]> {
-    if (!this.client) {
-      console.warn("Hasura client not available - returning empty activities");
-      return [];
-    }
-
-    try {
-      const response = await this.client.request<{
-        activity_log: ActivityLogEntry[];
-      }>(GET_ACTIVITIES_BY_ACTION, { actions });
-      return response.activity_log;
-    } catch (error) {
-      console.error("Failed to fetch activities by action:", error);
-      return [];
-    }
-  }
-
-  /**
    * Track a table in Hasura to auto-generate CRUD operations
    */
   async trackTable(tableName: string): Promise<boolean> {
@@ -377,7 +288,6 @@ export class HasuraService {
         return false;
       }
 
-      const result = await response.json();
       console.log(`✅ Successfully tracked table: ${tableName}`);
       return true;
     } catch (error) {

@@ -4,24 +4,20 @@ export interface Activity {
   id: string;
   timestamp: Date;
   action: string;
-  userId?: string;
-  metadata?: Record<string, any>;
-  source: ActivitySource;
 }
 
 export interface CreateActivityInput {
   action: string;
-  userId?: string;
-  metadata?: Record<string, any>;
-  source?: ActivitySource;
 }
 
-export enum ActivitySource {
-  SYSTEM = "system",
-  USER = "user",
-  API = "api",
-  HEALTH_CHECK = "health_check",
-  DEMO = "demo",
+export interface CreateBulkActivitiesInput {
+  activities: CreateActivityInput[];
+}
+
+export interface ActivityStats {
+  totalActivities: number;
+  timeRange: string;
+  topActions: string[];
 }
 
 // Feature events (for cross-feature communication)
