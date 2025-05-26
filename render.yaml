@@ -2,7 +2,7 @@ services:
   - type: web
     name: web
     runtime: node
-    region: us-east
+    region: ohio
     plan: pro
     rootDir: .
     buildFilter:
@@ -37,7 +37,7 @@ services:
   - type: web
     name: api
     runtime: node
-    region: us-east
+    region: ohio
     plan: pro
     rootDir: .
     buildFilter:
@@ -74,6 +74,6 @@ services:
 
 databases:
   - name: pegasus-prod
-    plan: pro
-    region: us-east
+    plan: free
+    region: ohio
     ipAllowList: [] # Only allow internal connections
