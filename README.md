@@ -3,8 +3,9 @@
 > **A production-ready monorepo that's designed for easy migration to microservices when you're ready to scale.**
 
 - [🚀 **Quick Start** (2 minutes)](#-quick-start-2-minutes)
+- [📋 **Development Tickets** (Temporary)](#-development-tickets-temporary)
 - [🎯 **Live Demo: See It in Action**](#-live-demo-see-it-in-action)
-- [🏛️ \*\*Microservices-Ready Architecture (MRA) \*\*](#️-microservices-ready-architecture-mra-)
+- [🏛️ **Microservices-Ready Architecture (MRA)**](#️-microservices-ready-architecture-mra)
   - [📁 **Feature Structure (2 Files Maximum)**](#-feature-structure-2-files-maximum)
   - [📖 **Complete Documentation**](#-complete-documentation)
   - [💡 **Why This Approach?**](#-why-this-approach)
@@ -37,8 +38,6 @@
     - [Hasura Configuration](#hasura-configuration)
 - [📚 **Learn More**](#-learn-more)
 
----
-
 ## 🚀 **Quick Start** (2 minutes)
 
 **Get the project running locally in under 2 minutes:**
@@ -65,7 +64,25 @@ open http://localhost:3000/activity  # Live demo
 - ✅ **Database**: PostgreSQL with sample data
 - ✅ **Real-time**: Hasura GraphQL engine
 
----
+## 📋 **Development Tickets** (Temporary)
+
+**🚧 Temporary Tracking System** - We'll be migrating to Linear this week for proper project management
+
+**📋 [View All Development Stories & Tickets](docs/tickets/initial-tickets.md)**
+
+For now, we're using a simple emoji-based tracking system in our documentation:
+
+- **📝 Ready** → **🚧 In Progress** → **👀 Under Review** → **🧪 Ready for Test** → **✅ Deployed**
+- **15 tickets** organized across **4 epics** (Authentication, Organizations, Events, Profiles)
+- **Priority indicators**: 🔥 Critical, ⚡ High, 📋 Medium, 📝 Low
+
+**Current Focus:**
+
+- 🔥 **PEG-1**: WorkOS Integration Setup (Critical blocker)
+- 🔥 **PEG-3**: User Roles Architecture Spike (Critical blocker)
+- ⚡ **PEG-7**: Organization Management APIs
+
+**Coming This Week:** Migration to Linear for proper sprint planning, story points, and team collaboration.
 
 ## 🎯 **Live Demo: See It in Action**
 
@@ -89,9 +106,7 @@ open http://localhost:3000/activity  # Live demo
 
 📖 **[Complete Documentation](docs/activity-history-feature.md)**
 
----
-
-## 🏛️ **Microservices-Ready Architecture (MRA) **
+## 🏛️ **Microservices-Ready Architecture (MRA)**
 
 > **🎯 This is the core organizational pattern for this boilerplate - designed for easy future migration to microservices**
 
@@ -128,8 +143,6 @@ packages/shared-types/      # Centralized Types
 - ✅ **Minimal Files**: Only 2 files per feature
 - ✅ **Hasura Direct**: No repository abstractions - leverage auto-generated APIs
 - ✅ **Type Safety**: Shared types across frontend/backend
-
----
 
 ## 🚀 **Why Hasura?**
 
@@ -179,8 +192,6 @@ query GetUserPosts {
 ```
 
 **This boilerplate demonstrates how to integrate Hasura with a traditional REST API**, giving you the best of both worlds: rapid GraphQL development for data operations and custom business logic in your Fastify API.
-
----
 
 ## 📋 **Developer Setup** (Required)
 
@@ -256,8 +267,6 @@ pnpm lint --fix   # Fix ESLint issues automatically
 
 </details>
 
----
-
 ## 🔧 **What's Inside**
 
 **Apps:**
@@ -280,8 +289,6 @@ pnpm lint --fix   # Fix ESLint issues automatically
 - ✅ **Real-time Data**: Hasura GraphQL subscriptions
 - ✅ **Auto-formatting**: Code formats during development
 - ✅ **Fast Builds**: Turborepo caching and parallelization
-
----
 
 ## 🏗️ **Technical Architecture**
 
@@ -481,8 +488,6 @@ Each deployment updates the `app_metadata` table with:
 | `HASURA_GRAPHQL_ENABLE_CONSOLE` | `true`              | `false`             | Enable/disable Hasura console    |
 
 </details>
-
----
 
 ## 📚 **Learn More**
 
