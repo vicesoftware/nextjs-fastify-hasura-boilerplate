@@ -29,6 +29,7 @@
     - [🎯 **When to Use Which Layer**](#-when-to-use-which-layer)
     - [🔄 **Integration Benefits**](#-integration-benefits)
   - [Database Schema](#database-schema)
+  - [Database Migrations](#database-migrations)
   - [Version Tracking \& Deployment Metadata](#version-tracking--deployment-metadata)
 - [🚀 **Deployment**](#-deployment)
   - [Quick Deploy](#quick-deploy)
@@ -433,6 +434,51 @@ CREATE TABLE health_snapshots (
   errors JSONB                          -- Error details
 );
 ```
+
+### Database Migrations
+
+**🔄 Automated Migration System** - Uses Drizzle ORM with automatic execution on startup
+
+**How It Works:**
+
+1. **📝 Schema Changes**: Modify `apps/api/src/db/schema.ts`
+2. **🔄 Generate Migration**: Run `cd apps/api && pnpm db:generate`
+3. **🚀 Auto-Apply**: Migrations run automatically when the API starts
+4. **🛡️ Retry Logic**: Built-in retry mechanism (5 attempts, 2-second delays)
+
+**Available Commands:**
+
+```bash
+# Generate new migration from schema changes
+cd apps/api && pnpm db:generate
+
+# Apply migrations manually (usually not needed - auto-runs on startup)
+cd apps/api && pnpm db:migrate
+
+# Push schema directly to DB (development only - skips migration files)
+cd apps/api && pnpm db:push
+
+# View database in browser
+cd apps/api && pnpm drizzle-kit studio
+```
+
+**Migration Files Location:**
+
+- `apps/api/src/db/migrations/` - Generated SQL migration files
+- `apps/api/drizzle.config.ts` - Drizzle configuration
+
+**Development Workflow:**
+
+1. **Modify Schema**: Edit `apps/api/src/db/schema.ts`
+2. **Generate Migration**: `pnpm db:generate` creates new SQL file
+3. **Restart API**: Migrations auto-apply on next `pnpm dev`
+4. **Verify Changes**: Check [Drizzle Studio](https://local.drizzle.studio)
+
+**Production Deployment:**
+
+- ✅ Migrations run automatically during deployment
+- ✅ Zero-downtime: Compatible migrations are safe
+- ✅ Rollback: Use git to revert schema changes if needed
 
 ### Version Tracking & Deployment Metadata
 
