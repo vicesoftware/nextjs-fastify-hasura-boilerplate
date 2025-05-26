@@ -1,0 +1,39 @@
+- table:
+    name: activity_log
+    schema: public
+  configuration:
+    column_config: {}
+    custom_column_names: {}
+    custom_name: activity_log
+    custom_root_fields: {}
+  event_triggers: []
+  insert_permissions: []
+  select_permissions: []
+  update_permissions: []
+  delete_permissions: []
+- table:
+    name: app_metadata
+    schema: public
+  configuration:
+    column_config: {}
+    custom_column_names: {}
+    custom_name: app_metadata
+    custom_root_fields: {}
+  event_triggers: []
+  insert_permissions: []
+  select_permissions: []
+  update_permissions: []
+  delete_permissions: []
+- table:
+    name: health_snapshots
+    schema: public
+  configuration:
+    column_config: {}
+    custom_column_names: {}
+    custom_name: health_snapshots
+    custom_root_fields: {}
+  event_triggers: []
+  insert_permissions: []
+  select_permissions: []
+  update_permissions: []
+  delete_permissions: []

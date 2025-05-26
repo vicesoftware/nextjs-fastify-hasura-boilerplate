@@ -10,7 +10,10 @@ export default function Home() {
     console.log("Environment Variables Debug Info:");
     console.log("NODE_ENV:", process.env.NODE_ENV);
     console.log("NEXT_PUBLIC_API_URL:", process.env.NEXT_PUBLIC_API_URL);
-    console.log("Raw value check:", JSON.stringify(process.env.NEXT_PUBLIC_API_URL));
+    console.log(
+      "Raw value check:",
+      JSON.stringify(process.env.NEXT_PUBLIC_API_URL),
+    );
     // Check for URL encoding issues
     if (process.env.NEXT_PUBLIC_API_URL?.includes("%7B")) {
       console.log("WARNING: URL contains encoded '{' character (%7B)");
@@ -45,6 +48,20 @@ export default function Home() {
         </ol>
 
         <div className="flex gap-4 items-center flex-col sm:flex-row">
+          <a
+            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
+            href="/activity"
+          >
+            <span className="text-lg">📊</span>
+            Activity Dashboard
+          </a>
+          <a
+            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
+            href="/tutorial"
+          >
+            <span className="text-lg">📚</span>
+            How It Works
+          </a>
           <a
             className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
             href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"

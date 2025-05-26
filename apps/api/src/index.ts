@@ -1,5 +1,5 @@
 import "dotenv/config";
-import fastify from "fastify";
+import Fastify from "fastify";
 import cors from "@fastify/cors";
 import { HealthCheckResponse } from "@repo/api-types";
 import {
@@ -9,12 +9,15 @@ import {
 } from "./db/index.js";
 import { seedDatabase } from "./db/seed.js";
 import { versionSyncService } from "./services/version-sync.js";
+import { activityLogger } from "./lib/activity-logger.js";
+import { hasuraService } from "./lib/hasura-client.js";
+import { hasuraSyncRoutes } from "./routes/hasura-sync.js";
 
 // Start time for uptime calculation
 const startTime = new Date();
 
 // Create Fastify instance
-const server = fastify({
+const server = Fastify({
   logger: true,
 });
 
@@ -32,17 +35,26 @@ if (process.env.WEB_URL) {
 }
 
 // Register CORS plugin
-server.register(cors, {
+await server.register(cors, {
   origin: allowedOrigins,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 });
 
+// Register Hasura sync routes
+await server.register(hasuraSyncRoutes);
+
+// Log system startup
+await activityLogger.logAppEvent("startup");
+
 // Health check route
 server.get("/api/health", async (): Promise<HealthCheckResponse> => {
   const uptime = Date.now() - startTime.getTime();
   const uptimeInSeconds = Math.floor(uptime / 1000);
+
+  // Log health check activity
+  await activityLogger.logHealthCheck();
 
   try {
     // Use enhanced health check with Hasura integration
@@ -83,6 +95,9 @@ server.get("/api/health", async (): Promise<HealthCheckResponse> => {
       error
     );
 
+    // Log error activity
+    await activityLogger.logError("health_check_failed");
+
     // Fallback to basic health check if enhanced version fails
     const dbStatus = await checkDbConnection();
 
@@ -107,6 +122,60 @@ server.get("/api/health", async (): Promise<HealthCheckResponse> => {
   }
 });
 
+// Activity demo endpoint - demonstrates Hasura's auto-generated CRUD
+server.get("/api/activities", async () => {
+  // Log API request
+  await activityLogger.logApiRequest("activities");
+
+  try {
+    // Get recent activities using Hasura's auto-generated query
+    const activities = await hasuraService.getRecentActivities(10);
+
+    return {
+      success: true,
+      data: activities,
+      message: "Recent activities fetched using Hasura's auto-generated query",
+    };
+  } catch (error) {
+    await activityLogger.logError("activities_fetch_failed");
+    return {
+      success: false,
+      error: "Failed to fetch activities",
+      message: "This demonstrates Hasura's error handling",
+    };
+  }
+});
+
+// Bulk activity logging demo endpoint
+server.post("/api/activities/bulk", async (request) => {
+  const { actions } = request.body as { actions: string[] };
+
+  if (!actions || !Array.isArray(actions)) {
+    return {
+      success: false,
+      error: "Invalid request: actions array required",
+    };
+  }
+
+  try {
+    // Demonstrate Hasura's bulk insert capabilities
+    const success = await activityLogger.logBulk(actions);
+
+    return {
+      success,
+      message: success
+        ? `${actions.length} activities logged using Hasura's auto-generated bulk mutation`
+        : "Failed to log activities in bulk",
+    };
+  } catch (error) {
+    await activityLogger.logError("bulk_logging_failed");
+    return {
+      success: false,
+      error: "Failed to log activities in bulk",
+    };
+  }
+});
+
 // Start the server
 const start = async () => {
   try {
@@ -124,7 +193,16 @@ const start = async () => {
     const address = server.server.address();
     const listeningPort = typeof address === "string" ? address : address?.port;
     console.log(`Server listening on ${listeningPort}`);
+
+    // Log successful startup
+    await activityLogger.log("server.started");
+
+    console.log(`🚀 API Server running on port ${port}`);
+    console.log(
+      `📊 Activity logging enabled - demonstrating Hasura's CRUD capabilities`
+    );
   } catch (err) {
+    await activityLogger.logError("server_start_failed");
     server.log.error(err);
     process.exit(1);
   }

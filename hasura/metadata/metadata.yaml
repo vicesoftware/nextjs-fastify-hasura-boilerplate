@@ -1,0 +1,14 @@
+version: 3
+sources: "!include databases/databases.yaml"
+actions: []
+custom_types:
+  enums: []
+  input_objects: []
+  objects: []
+  scalars: []
+allowlist: []
+cron_triggers: []
+inherited_roles: []
+query_collections: []
+remote_schemas: []
+rest_endpoints: []
