@@ -7,7 +7,7 @@ import {
   ActivityCreatedEvent,
   ActivityBulkCreatedEvent,
   Activity,
-} from "../../../../../packages/shared-types/src/activity.js";
+} from "@repo/shared-types";
 import { ACTIVITY_QUERIES } from "./queries.js";
 
 interface QueryParams {

@@ -12,6 +12,13 @@ export default [
     },
   },
   {
-    ignores: ["eslint.config.mjs"],
+    ignores: [
+      "eslint.config.mjs",
+      "dist/**",
+      "**/*.js",
+      "**/*.d.ts",
+      "**/*.js.map",
+      "**/*.d.ts.map",
+    ],
   },
 ];

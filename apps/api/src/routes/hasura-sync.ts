@@ -34,7 +34,7 @@ export async function hasuraSyncRoutes(fastify: FastifyInstance) {
 
       // Find untracked tables
       const untrackedTables = tables.rows
-        .map((row: any) => row.table_name as string)
+        .map((row: Record<string, unknown>) => row.table_name as string)
         .filter((tableName: string) => !trackedTableNames.includes(tableName));
 
       // Track each untracked table
