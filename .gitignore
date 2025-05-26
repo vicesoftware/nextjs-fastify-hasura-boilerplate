@@ -27,6 +27,18 @@ out/
 build
 dist
 
+# TypeScript build artifacts (generated .js/.d.ts files from .ts sources)
+**/*.js
+**/*.d.ts
+**/*.js.map
+**/*.d.ts.map
+# But allow specific config files that are intentionally committed
+!**/eslint.config.*
+!**/next.config.*
+!**/tailwind.config.*
+!**/postcss.config.*
+!**/vite.config.*
+!**/vitest.config.*
 
 # Debug
 npm-debug.log*

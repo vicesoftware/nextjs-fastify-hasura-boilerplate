@@ -41,6 +41,9 @@ importers:
       '@repo/api-types':
         specifier: workspace:*
         version: link:../../packages/api-types
+      '@repo/shared-types':
+        specifier: workspace:*
+        version: link:../../packages/shared-types
       dotenv:
         specifier: ^16.5.0
         version: 16.5.0

@@ -4,8 +4,6 @@ import {
   timestamp,
   jsonb,
   pgTable,
-  unique,
-  text,
   uuid,
 } from "drizzle-orm/pg-core";
 

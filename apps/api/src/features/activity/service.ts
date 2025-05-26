@@ -2,10 +2,7 @@ import { HasuraClient } from "../../shared/hasura/client.js";
 import { EventBus } from "../../shared/events/bus.js";
 import { ActivityHandlers } from "./handlers.js";
 import { ACTIVITY_QUERIES } from "./queries.js";
-import {
-  ActivityBulkCreatedEvent,
-  Activity,
-} from "../../../../../packages/shared-types/src/activity.js";
+import { ActivityBulkCreatedEvent, Activity } from "@repo/shared-types";
 
 // Hasura response type
 interface CreateBulkActivitiesResponse {
