@@ -16,7 +16,7 @@ services:
       export PNPM_HOME="$HOME/.local/share/pnpm"
       export PATH="$PNPM_HOME:$PATH"
       pnpm install -g turbo
-      pnpm install --no-frozen-lockfile
+      pnpm install --no-frozen-lockfile --recursive
       turbo build --filter=web...
     startCommand: cd apps/web && PORT=10000 pnpm start
     healthCheckPath: /api/health
@@ -54,7 +54,7 @@ services:
       export PNPM_HOME="$HOME/.local/share/pnpm"
       export PATH="$PNPM_HOME:$PATH"
       pnpm install -g turbo
-      pnpm install --no-frozen-lockfile
+      pnpm install --no-frozen-lockfile --recursive
       turbo build --filter=api...
     startCommand: cd apps/api && PORT=4000 pnpm start:prod
     healthCheckPath: /api/health
