@@ -13,6 +13,8 @@ services:
         - "pnpm*"
     buildCommand: |
       corepack enable
+      export PNPM_HOME="$HOME/.local/share/pnpm"
+      export PATH="$PNPM_HOME:$PATH"
       pnpm install -g turbo
       pnpm install --no-frozen-lockfile
       turbo build --filter=web...
@@ -49,6 +51,8 @@ services:
         - "pnpm*"
     buildCommand: |
       corepack enable
+      export PNPM_HOME="$HOME/.local/share/pnpm"
+      export PATH="$PNPM_HOME:$PATH"
       pnpm install -g turbo
       pnpm install --no-frozen-lockfile
       turbo build --filter=api...
