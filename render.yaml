@@ -13,8 +13,9 @@ services:
         - "pnpm*"
     buildCommand: |
       corepack enable
+      pnpm install -g turbo
       pnpm install --no-frozen-lockfile
-      pnpm exec turbo build --filter=web...
+      turbo build --filter=web...
     startCommand: cd apps/web && PORT=10000 pnpm start
     healthCheckPath: /api/health
     # Optionally add repo/branch/autodeploy here
@@ -47,10 +48,10 @@ services:
         - "turbo.json"
         - "pnpm*"
     buildCommand: |
-      export NODE_ENV=production
       corepack enable
+      pnpm install -g turbo
       pnpm install --no-frozen-lockfile
-      pnpm exec turbo build --filter=api...
+      turbo build --filter=api...
     startCommand: cd apps/api && PORT=4000 pnpm start:prod
     healthCheckPath: /api/health
     # Optionally add repo/branch/autodeploy here
