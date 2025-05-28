@@ -18,8 +18,8 @@ services:
       pnpm install -g turbo
       NODE_ENV=development pnpm install --no-frozen-lockfile --recursive
       turbo build --filter=web...
-    startCommand: cd apps/web && PORT=10000 pnpm start
-    healthCheckPath: /api/health
+    startCommand: cd apps/web && PORT=10000 HOSTNAME=0.0.0.0 pnpm start
+    healthCheckPath: /
     # Optionally add repo/branch/autodeploy here
     envVars:
       - key: NEXT_PUBLIC_API_URL
