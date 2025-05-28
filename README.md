@@ -66,11 +66,25 @@ open http://localhost:3000/activity  # Live demo
 - ✅ **Database**: PostgreSQL with sample data
 - ✅ **Real-time**: Hasura GraphQL engine
 
+## 🌐 **Live Deployment**
+
+**✅ Currently deployed and running on Render:**
+
+- **🌐 Web Application**: [https://web-ubxh.onrender.com](https://web-ubxh.onrender.com)
+- **🔌 API Service**: [https://api-82a7.onrender.com](https://api-82a7.onrender.com)
+- **📊 Health Status**: [https://web-ubxh.onrender.com/api/health](https://web-ubxh.onrender.com/api/health)
+
+**🚀 Try the live features:**
+- Activity dashboard with real-time updates
+- Auto-generated GraphQL APIs via Hasura
+- Full monorepo deployment working
+
 ## 📋 **Development Tickets** (Temporary)
 
 **🚧 Temporary Tracking System** - We'll be migrating to Linear this week for proper project management
 
-**📋 [View All Development Stories & Tickets](docs/tickets/initial-tickets.md)**
+**📋 [View All Development Stories & Tickets](docs/tickets/initial-tickets.md)**  
+**🏗️ [Infrastructure & Deployment Epic](docs/tickets/infrastructure-epic.md)** ← **Phase 1 Complete!**
 
 For now, we're using a simple emoji-based tracking system in our documentation:
 
@@ -80,9 +94,15 @@ For now, we're using a simple emoji-based tracking system in our documentation:
 
 **Current Focus:**
 
+- ✅ **INFRA-002**: Render Deployment Complete (✅ **DONE!**)
 - 🔥 **PEG-1**: WorkOS Integration Setup (Critical blocker)
 - 🔥 **PEG-3**: User Roles Architecture Spike (Critical blocker)
 - ⚡ **PEG-7**: Organization Management APIs
+
+**Infrastructure Status:**
+- ✅ **Phase 1**: Render deployment working, team unblocked
+- 🔄 **Phase 2**: Docker migration planning (better production builds)
+- 📋 **Phase 3**: Integration testing pipeline
 
 **Coming This Week:** Migration to Linear for proper sprint planning, story points, and team collaboration.
 
@@ -500,11 +520,21 @@ Each deployment updates the `app_metadata` table with:
 
 > **📋 [Infrastructure & Deployment Epic](docs/tickets/infrastructure-epic.md)** - Current deployment modernization roadmap and tasks
 
+**✅ Status: Successfully Deployed to Render!**
+
+Both web and API services are currently deployed and running on Render with:
+- ✅ **Dynamic Service References** - Services auto-discover each other's URLs
+- ✅ **Health Monitoring** - Comprehensive health checks across all services
+- ✅ **Turborepo Integration** - Monorepo builds working correctly
+- ✅ **Production Environment** - Live deployment ready for team use
+
 ### Quick Deploy
 
 1. **Fork this repository**
 2. **Connect to Render** - Import your fork
 3. **Deploy** - Render handles the rest automatically
+
+**Note:** The current deployment uses dev dependencies during build (temporary solution). See the [Infrastructure Epic](docs/tickets/infrastructure-epic.md) for the roadmap to Docker-based production builds.
 
 ### Environment Variables
 
