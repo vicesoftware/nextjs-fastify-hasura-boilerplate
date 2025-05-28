@@ -23,7 +23,10 @@ services:
     # Optionally add repo/branch/autodeploy here
     envVars:
       - key: NEXT_PUBLIC_API_URL
-        value: https://api-82a7.onrender.com
+        fromService:
+          name: api
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
       - key: NODE_ENV
         value: production
       - key: TURBO_REMOTE_ONLY
@@ -63,7 +66,10 @@ services:
       - key: NODE_ENV
         value: production
       - key: WEB_URL
-        value: https://web-ubxh.onrender.com
+        fromService:
+          name: web
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
       - key: TURBO_REMOTE_ONLY
         value: "true"
       - key: TURBO_TEAM
