@@ -16,8 +16,8 @@ export async function OPTIONS() {
  */
 export async function GET() {
   // Validate required environment variables
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  if (!apiUrl) {
+  const baseApiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!baseApiUrl) {
     const errorData = {
       status: "down",
       timestamp: new Date().toISOString(),
@@ -35,12 +35,21 @@ export async function GET() {
     });
   }
 
+  // Construct the API health endpoint URL
+  // The NEXT_PUBLIC_API_URL contains the base service URL, we need to add /api/health
+  const apiHealthUrl = `${baseApiUrl}/api/health`;
+
+  console.log('Environment Variables Debug Info:');
+  console.log('NODE_ENV:', process.env.NODE_ENV);
+  console.log('NEXT_PUBLIC_API_URL:', baseApiUrl);
+  console.log('Constructed API Health URL:', apiHealthUrl);
+
   // Get API health status (including database)
   let apiHealth = null;
   let overallStatus = "up";
   
   try {
-    const response = await fetch(`${apiUrl}/health`, {
+    const response = await fetch(apiHealthUrl, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -59,14 +68,16 @@ export async function GET() {
       overallStatus = 'down';
       apiHealth = {
         status: 'down',
-        error: `API returned ${response.status}: ${response.statusText}`
+        error: `API returned ${response.status}: ${response.statusText}`,
+        url: apiHealthUrl
       };
     }
   } catch (error) {
     overallStatus = 'down';
     apiHealth = {
       status: 'down',
-      error: error instanceof Error ? error.message : 'Failed to connect to API'
+      error: error instanceof Error ? error.message : 'Failed to connect to API',
+      url: apiHealthUrl
     };
   }
 
