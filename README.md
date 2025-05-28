@@ -32,6 +32,7 @@
   - [Database Migrations](#database-migrations)
   - [Version Tracking \& Deployment Metadata](#version-tracking--deployment-metadata)
 - [🚀 **Deployment**](#-deployment)
+  - [📋 [Infrastructure & Deployment Epic](docs/tickets/infrastructure-epic.md)](#-infrastructure--deployment-epic)
   - [Quick Deploy](#quick-deploy)
   - [Environment Variables](#environment-variables)
     - [Web Application (Next.js)](#web-application-nextjs)
@@ -496,6 +497,8 @@ Each deployment updates the `app_metadata` table with:
 - Environment-specific metadata
 
 ## 🚀 **Deployment**
+
+> **📋 [Infrastructure & Deployment Epic](docs/tickets/infrastructure-epic.md)** - Current deployment modernization roadmap and tasks
 
 ### Quick Deploy
 
