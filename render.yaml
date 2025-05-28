@@ -81,7 +81,9 @@ services:
       - key: PORT
         value: "4000"
       - key: DATABASE_URL
-        value: postgresql://pegasus_v8q7_user:AVfv6bTVCiQ1Cjj5PieSgEB7kUwwc173@dpg-d0pq558dl3ps73b1oshg-a/pegasus_v8q7
+        fromDatabase:
+          name: pegasus-prod
+          property: connectionString
 
 databases:
   - name: pegasus-prod
