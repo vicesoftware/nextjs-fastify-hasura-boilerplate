@@ -98,7 +98,6 @@ services:
     dockerfilePath: ./Dockerfile.hasura
     region: ohio
     plan: free
-    port: 8080
     healthCheckPath: /healthz
     envVars:
       - key: HASURA_GRAPHQL_DATABASE_URL
