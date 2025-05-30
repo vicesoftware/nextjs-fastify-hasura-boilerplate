@@ -119,7 +119,7 @@ services:
           envVarKey: RENDER_EXTERNAL_URL
 
 databases:
-  - name: postgres
+  - name: pegasus
     plan: free
     region: ohio
     ipAllowList: [] # Only allow internal connections
