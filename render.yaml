@@ -70,6 +70,13 @@ services:
           name: web
           type: web
           envVarKey: RENDER_EXTERNAL_URL
+      - key: HASURA_URL
+        fromService:
+          name: hasura
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: HASURA_ADMIN_SECRET
+        sync: false
       - key: TURBO_REMOTE_ONLY
         value: "true"
       - key: TURBO_TEAM
@@ -82,11 +89,38 @@ services:
         value: "4000"
       - key: DATABASE_URL
         fromDatabase:
-          name: pegasus-prod
+          name: postgres
           property: connectionString
 
+  - type: web
+    name: hasura
+    env: docker
+    dockerfilePath: ./Dockerfile.hasura
+    region: ohio
+    plan: free
+    port: 8080
+    healthCheckPath: /healthz
+    envVars:
+      - key: HASURA_GRAPHQL_DATABASE_URL
+        fromDatabase:
+          name: postgres
+          property: connectionString
+      - key: HASURA_GRAPHQL_ENABLE_CONSOLE
+        value: "false"
+      - key: HASURA_GRAPHQL_DEV_MODE
+        value: "false"
+      - key: HASURA_GRAPHQL_ENABLED_LOG_TYPES
+        value: "startup, http-log, webhook-log, websocket-log, query-log"
+      - key: HASURA_GRAPHQL_ADMIN_SECRET
+        sync: false
+      - key: HASURA_GRAPHQL_CORS_DOMAIN
+        fromService:
+          name: web
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+
 databases:
-  - name: pegasus-prod
+  - name: postgres
     plan: free
     region: ohio
     ipAllowList: [] # Only allow internal connections
