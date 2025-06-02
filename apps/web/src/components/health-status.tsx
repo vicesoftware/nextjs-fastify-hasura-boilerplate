@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { HealthCheckResponse, HealthIndicatorStatus } from "@repo/api-types";
 
 type HealthStatusProps = {
@@ -13,6 +14,13 @@ type ComponentVersion = {
   version: string;
   deployed_at: string;
   git_commit?: string;
+};
+
+// Type for detailed Hasura status
+type HasuraStatusResponse = {
+  hasura_available: boolean;
+  tracked_tables_count: number;
+  tracked_tables: string[];
 };
 
 // Extended health response that includes web app specific fields
@@ -28,10 +36,35 @@ type ExtendedHealthResponse = HealthCheckResponse & {
 
 export default function HealthStatus({ apiUrl }: HealthStatusProps) {
   const [healthData, setHealthData] = useState<ExtendedHealthResponse | null>(
-    null,
+    null
   );
+  const [hasuraDetails, setHasuraDetails] =
+    useState<HasuraStatusResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [hasuraLoading, setHasuraLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  const fetchHasuraDetails = useCallback(async () => {
+    try {
+      setHasuraLoading(true);
+      const hasuraApiUrl = apiUrl.replace("/health", "/hasura/status");
+      const response = await fetch(hasuraApiUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setHasuraDetails(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch Hasura details:", err);
+    } finally {
+      setHasuraLoading(false);
+    }
+  }, [apiUrl]);
 
   useEffect(() => {
     const fetchHealthStatus = async () => {
@@ -52,9 +85,17 @@ export default function HealthStatus({ apiUrl }: HealthStatusProps) {
 
         const data = await response.json();
         setHealthData(data);
+
+        // Auto-fetch Hasura details if Hasura is available
+        if (
+          data.details?.hasura?.status === "up" ||
+          data.info?.deployment?.hasura_available
+        ) {
+          fetchHasuraDetails();
+        }
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "An unknown error occurred",
+          err instanceof Error ? err.message : "An unknown error occurred"
         );
       } finally {
         setLoading(false);
@@ -67,7 +108,7 @@ export default function HealthStatus({ apiUrl }: HealthStatusProps) {
     const intervalId = setInterval(fetchHealthStatus, 30000);
 
     return () => clearInterval(intervalId);
-  }, [apiUrl]);
+  }, [apiUrl, fetchHasuraDetails]);
 
   if (loading) {
     return (
@@ -173,7 +214,7 @@ export default function HealthStatus({ apiUrl }: HealthStatusProps) {
                       {formatVersion(version)}
                     </span>
                   </div>
-                ),
+                )
               )}
             </div>
           )}
@@ -299,18 +340,62 @@ export default function HealthStatus({ apiUrl }: HealthStatusProps) {
 
         {healthData.details?.hasura && (
           <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-md">
-            <h4 className="text-sm font-semibold text-foreground/80 m-0 mb-2">
-              Hasura GraphQL
-            </h4>
+            <div className="flex items-center justify-between mb-2">
+              <h4 className="text-sm font-semibold text-foreground/80 m-0">
+                Hasura GraphQL
+              </h4>
+              <button
+                onClick={fetchHasuraDetails}
+                disabled={hasuraLoading}
+                className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-800/50 transition-colors disabled:opacity-50"
+              >
+                {hasuraLoading ? "..." : "↻"}
+              </button>
+            </div>
             <p
               className={`text-sm font-semibold ${getStatusColorClass(healthData.details.hasura.status)} bg-opacity-10 dark:bg-opacity-20 inline-block px-2 py-1 rounded mb-2`}
             >
               {healthData.details.hasura.status.toUpperCase()}
             </p>
             {healthData.details.hasura.response_time && (
-              <p className="text-xs opacity-70 m-0">
+              <p className="text-xs opacity-70 m-0 mb-1">
                 Response time: {healthData.details.hasura.response_time}ms
               </p>
+            )}
+            {hasuraDetails && (
+              <div className="mt-2 pt-2 border-t border-gray-300 dark:border-gray-600">
+                <p className="text-xs opacity-70 m-0 mb-1">
+                  Tables tracked: {hasuraDetails.tracked_tables_count}
+                </p>
+                {hasuraDetails.tracked_tables.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {hasuraDetails.tracked_tables.map((table) => (
+                      <span
+                        key={table}
+                        className="text-xs px-1.5 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded font-mono"
+                      >
+                        {table}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+            {!hasuraDetails && healthData.details.hasura.status === "up" && (
+              <p className="text-xs opacity-50 mt-2">
+                Click ↻ to load table details
+              </p>
+            )}
+            {(healthData.details.hasura.status === "up" ||
+              healthData.info?.deployment?.hasura_available) && (
+              <div className="mt-2 pt-2 border-t border-gray-300 dark:border-gray-600">
+                <Link
+                  href="/hasura"
+                  className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+                >
+                  View detailed Hasura status →
+                </Link>
+              </div>
             )}
           </div>
         )}
@@ -331,7 +416,7 @@ export default function HealthStatus({ apiUrl }: HealthStatusProps) {
                 <p className="text-xs opacity-70 m-0">
                   Last checked:{" "}
                   {formatDate(
-                    healthData.details.api.details.database.timestamp,
+                    healthData.details.api.details.database.timestamp
                   )}
                 </p>
               )}
