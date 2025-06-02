@@ -16,13 +16,19 @@ if (!hasuraUrl) {
     "HASURA_ADMIN_SECRET environment variable is not set - Hasura features will be disabled"
   );
 } else {
-  // Hasura GraphQL client configuration
-  hasuraClient = new GraphQLClient(hasuraUrl, {
+  // Hasura GraphQL client configuration - append /v1/graphql to the base URL
+  const hasuraGraphQLUrl = hasuraUrl.endsWith("/")
+    ? `${hasuraUrl}v1/graphql`
+    : `${hasuraUrl}/v1/graphql`;
+
+  hasuraClient = new GraphQLClient(hasuraGraphQLUrl, {
     headers: {
       "x-hasura-admin-secret": hasuraAdminSecret,
     },
   });
-  console.log("Hasura client initialized successfully");
+  console.log(
+    `Hasura client initialized successfully with URL: ${hasuraGraphQLUrl}`
+  );
 }
 
 // GraphQL queries and mutations
