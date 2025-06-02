@@ -104,6 +104,10 @@ services:
         fromDatabase:
           name: pegasus
           property: connectionString
+      - key: DATABASE_URL
+        fromDatabase:
+          name: pegasus
+          property: connectionString
       - key: HASURA_GRAPHQL_ENABLE_CONSOLE
         value: "false"
       - key: HASURA_GRAPHQL_DEV_MODE
@@ -117,6 +121,10 @@ services:
           name: web
           type: web
           envVarKey: RENDER_EXTERNAL_URL
+      - key: HASURA_GRAPHQL_DISABLE_CORS
+        value: "false"
+      - key: HASURA_GRAPHQL_METADATA_DIR
+        value: "/hasura-metadata"
 
 databases:
   - name: pegasus

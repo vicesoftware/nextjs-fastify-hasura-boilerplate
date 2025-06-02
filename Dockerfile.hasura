@@ -1,8 +1,11 @@
 FROM hasura/graphql-engine:v2.44.0
 
-# Copy any custom metadata or migrations if needed
-# COPY hasura/metadata /hasura-metadata
+# Copy Hasura metadata to the container
+COPY hasura/metadata /hasura-metadata
+
+# Note: No migrations directory exists yet, so we don't copy it
+# When migrations are added later, uncomment the line below:
 # COPY hasura/migrations /hasura-migrations
 
 # The container will use environment variables for configuration
-# No additional setup needed as Hasura reads from env vars
+# Hasura will automatically read metadata from /hasura-metadata
