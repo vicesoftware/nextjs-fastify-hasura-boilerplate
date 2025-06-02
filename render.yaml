@@ -76,7 +76,7 @@ services:
           type: web
           envVarKey: RENDER_EXTERNAL_URL
       - key: HASURA_ADMIN_SECRET
-        generateValue: true
+        value: "e298fd6335dca5e3e2de050be76947ad64f11b867abd366ed0406fc9256679c8"
       - key: TURBO_REMOTE_ONLY
         value: "true"
       - key: TURBO_TEAM
@@ -115,7 +115,7 @@ services:
       - key: HASURA_GRAPHQL_ENABLED_LOG_TYPES
         value: "startup, http-log, webhook-log, websocket-log, query-log"
       - key: HASURA_GRAPHQL_ADMIN_SECRET
-        generateValue: true
+        value: "e298fd6335dca5e3e2de050be76947ad64f11b867abd366ed0406fc9256679c8"
       - key: HASURA_GRAPHQL_CORS_DOMAIN
         fromService:
           name: web
